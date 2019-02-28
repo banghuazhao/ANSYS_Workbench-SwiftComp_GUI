@@ -1,0 +1,1344 @@
+<extension version="1" name="SwiftComp">
+    <guid shortid="SwiftComp">F4006F90-3B5B-4515-9DC9-D15FE80833BA</guid>
+    <author>Banghua Zhao, Hamsasew Sertse, Xin Liu, Su Tian, Wenbin Yu</author>
+    <script src="geometry.py" />
+    <script src="hom.py" />
+    <script src="structural.py" />
+    <script src="dehom.py" />
+    <script src="help.py" />
+    <script src="failure.py" />	
+	<script src="FailureCriTabularData.py" />
+
+    <interface context="Project|Mechanical">
+        <images>images</images>
+		<toolbar name="SwiftComp" caption="SwiftComp">
+		</toolbar>
+    </interface>
+	
+    <simdata context="Project|Mechanical">
+	
+        <solver name="SwiftCompHom" version="1" caption="SwiftComp Homogenization" icon="SCHom" analysis="Static" physics="Structural">
+            <callbacks>
+                <onsolve>SwiftCompHom</onsolve>
+            </callbacks>
+        </solver>
+		
+        <solver name="SwiftCompDehom" version="1" caption="SwiftComp Dehomogenization" icon="SCDehom" analysis="Static" physics="Structural">
+            <callbacks>
+                <onsolve>SwiftCompDehom</onsolve>
+                <getreader>GetReader</getreader>
+            </callbacks>
+        </solver>
+		
+		<solver name="SwiftCompFailure" version="1" caption="SwiftComp Failure Analysis" icon="SCFail" analysis="Static" physics="Structural">
+            <callbacks>
+                <onsolve>SwiftCompFailure</onsolve>
+            </callbacks>
+        </solver>
+		
+    </simdata>
+	
+	
+    <!-- spaceclaim -->
+    <!-- <interface context="spaceClaim"> -->
+        <!-- <Images>images</images> -->
+        <!-- <Toolbar name="swiftcomp" caption="swiftcomp"> -->
+            <!-- <Entry name="square2d" icon="square2datspaceclaimtoolbar" caption="square pack microstructure 2d"> -->
+				<!-- <Callbacks> -->
+					<!-- <Onclick>square2datspaceclaimtoolbar</onclick> -->
+				<!-- </Callbacks> -->
+            <!-- </Entry> -->
+        <!-- </Toolbar> -->
+    <!-- </Interface> -->
+    <!-- spaceclaim -->
+	
+	
+    <interface context="DesignModeler">
+        <images>images</images>
+        <toolbar name="SwiftComp" caption="SwiftComp">
+		
+            <entry name="Common1DSG" icon="common1DSGAtToolbar" caption="Common 1D SG">
+                <entry name="dummyPlate" icon="plateModelHomAtToolbar" caption="Dummy Plate (for ACP)">
+                    <callbacks>
+                        <onclick>dummyPlateAtToolbar</onclick>
+                    </callbacks>
+                </entry>
+            </entry>
+			
+            <entry name="Common2DSG" icon="square2DAtToolbar" caption="Common 2D SG">
+                <entry name="square2D" icon="square2DAtToolbar" caption="Square Pack Microstructure 2D">
+                    <callbacks>
+                        <onclick>square2DAtToolbar</onclick>
+                    </callbacks>
+                </entry>
+            </entry>
+			
+            <entry name="Common3DSG" icon="sphericalAtToolbar" caption="Common 3D SG">
+                <entry name="spherical" icon="sphericalAtToolbar" caption="Spherical Inclusion Microstructure">
+                    <callbacks>
+                        <onclick>sphericalAtToolbar</onclick>
+                    </callbacks>
+                </entry>
+            </entry>
+			
+            <entry name="Help" caption="Help" icon="helpAtToolbar">
+                <callbacks>
+                    <onclick>helpAtToolbar</onclick>
+                </callbacks>
+            </entry>
+			
+        </toolbar>
+    </interface>
+
+
+    <simdata context="DesignModeler">
+	
+        <geometry name="dummyPlate" icon="plateModelHomAtToolbar" caption="Dummy Plate" version="1">
+            <callbacks>
+                <ongenerate>dummyPlateAtTree</ongenerate>
+                <OnAfterGenerate>dummyPlateAtTreeAfterGenerate</OnAfterGenerate>
+            </callbacks>
+            <propertygroup name="Definition" caption="Definition">
+                <property name="Dummy Plate Length" caption="Dummy Plate Length" control="float" default="1.0">
+                    <callbacks>
+                        <IsValid>dummyPlateLengthIsValid</IsValid>
+                    </callbacks>
+                </property>
+            </propertygroup>
+        </geometry>
+		
+        <geometry name="square2D" icon="square2DAtTree" caption="Square Pack Microstructure 2D" version="1">
+            <callbacks>
+                <ongenerate>square2DAtTree</ongenerate>
+                <OnAfterGenerate>square2DAtTreeAfterGenerate</OnAfterGenerate>
+            </callbacks>
+            <propertygroup name="Definition" caption="Definition">
+                <property name="Fiber Volume Fraction" caption="Fiber Volume Fraction [%]" control="float" isparameter="True">
+                    <callbacks>
+                        <IsValid>square2DFiberFractionIsValid</IsValid>
+                    </callbacks>
+                </property>
+            </propertygroup>
+            <propertygroup name="Information" caption="Information">
+                <property name="SG Length" caption="SG Length" control="float" default="1"/>
+                <property name="Calculated Fiber Radius" caption="Calculated Fiber Radius" control="float" default="0.0" readonly="True" visible="False">
+                    <callbacks>
+                        <isvisible>square2DFiberRadiusVisible</isvisible>
+                    </callbacks>
+                </property>
+            </propertygroup>
+        </geometry>
+		
+        <geometry name="spherical" icon="sphericalAtTree" caption="Spherical Inclusion Microstructure" version="1">
+            <callbacks>
+                <ongenerate>sphericalAtTree</ongenerate>
+                <OnAfterGenerate>sphericalAtTreeAfterGenerate</OnAfterGenerate>
+            </callbacks>
+            <propertygroup name="Definition" caption="Definition">
+                <property name="Sphere Volume Fraction" caption="Sphere Volume Fraction [%]" control="float" isparameter="True">
+                    <callbacks>
+                        <IsValid>sphericalSphereFractionIsValid</IsValid>
+                    </callbacks>
+                </property>
+            </propertygroup>
+            <propertygroup name="Information" caption="Information">
+                <property name="SG Length" caption="SG Length" control="float" default="1"/>
+                <property name="Calculated Sphere Radius" caption="Calculated Sphere Radius" control="float" default="0.0" readonly="True" visible="False">
+                    <callbacks>
+                        <isvisible>sphericalSphereRadiusVisible</isvisible>
+                    </callbacks>
+                </property>
+            </propertygroup>
+        </geometry>
+		
+    </simdata>
+
+
+    <!-- Mechanical -->
+    <interface context="Mechanical">
+        <images>images</images>
+        <toolbar name="SwiftComp" caption="SwiftComp">
+
+            <entry name="Homogenization" icon="Homogenization" caption="Homogenization">
+                <entry name="beamHomogenization" icon="beamModelHomAtToolbar" caption="Beam Model" userobject="beamHomogenization" />
+                <entry name="plateHomogenization" icon="plateModelHomAtToolbar" caption="Plate/Shell Model" userobject="plateHomogenization" />
+                <entry name="solidHomogenization" icon="solidModelHomAtToolbar" caption="Solid Model" userobject="solidHomogenization" />
+                <entry name="homogenizationResult" icon="homogenizationResultAtToolbar" caption="Homogenization Result" userobject="homogenizationResult" />
+            </entry>
+
+            <entry name="Structural Analysis" icon="structuralAnalysis" caption="Structural Analysis">
+				<entry name="importHomogenizationResult" icon="importHomogenizationResultAtToolBar" caption="Import Homogenization Result" userobject="importHomogenizationResult" />
+                <entry name="extractResult" icon="extractResultAtToolbar" caption="Extract Result" userobject="extractResult" />
+            </entry>
+
+            <entry name="Dehomogenization" icon="Dehomogenization" caption="Dehomogenization">
+                <entry name="beamDehomogenization" icon="beamModelDehomAtToolbar" caption="Beam Model" userobject="beamDehomogenization" />
+                <entry name="plateDehomogenization" icon="plateModelDehomAtToolbar" caption="Plate/Shell Model" userobject="plateDehomogenization" />
+                <entry name="solidDehomogenization" icon="solidModelDehomAtToolbar" caption="Solid Model" userobject="solidDehomogenization" />
+            </entry>
+
+		    <entry name="Failure Analysis" icon="failureAnalysis" caption="Failure Analysis">
+                <entry name="failureStregnth" icon="failureStregnthAtToolbar" caption="Failure Strength" userobject="failureStregnth" />
+				<entry name="failureEnvelope" icon="failureEnvelopeAtToolbar" caption="Failure Envelope" userobject="failureEnvelope" />
+				<entry name="failureIndex" icon="failureIndexAtToolbar" caption="Failure Index" userobject="failureIndex" />
+            </entry>
+
+            <entry name="Help" caption="Help" icon="helpAtToolbar">
+                <callbacks>
+                    <onclick>helpAtToolbar</onclick>
+                </callbacks>
+            </entry>
+
+        </toolbar>
+     </interface>
+
+    <simdata context="Mechanical">
+
+        <!-- Homogenization Toolbar -->
+
+        <load name="beamHomogenization" version="1" caption="Beam Model Homogenization Setting" icon="beamModelHomAtTree" issupport="false" isload="true">
+            <callbacks>
+                <canadd>beamHomogenizationCanAddAtTree</canadd>
+				<oninit>beamHomogenizationOnInitAtTree</oninit>
+                <ongenerate>beamHomogenizationAtTree</ongenerate>
+				<OnRemove>HomogenizationSettingOnRemovetAtTree</OnRemove>
+            </callbacks>
+
+            <propertygroup name="Homogenization Result Name" caption="Homogenization Result Name">
+                <property name="Name" caption="Name" control="text" default="" />
+            </propertygroup>		
+			
+            <propertygroup name="Submodel" caption="Submodel">
+                <property name="Type of Beam Model" caption="Type of Beam Model" control="select" default="Euler-Bernoulli Beam Model">
+                    <attributes options="Euler-Bernoulli Beam Model,Timoshenko Beam Model" />
+                    <!-- <attributes options="Euler-Bernoulli Beam Model,Timoshenko Beam Model,Vlasov Beam Model,Beam Model With the Trapeze Effect" /> -->
+                </property>
+            </propertygroup>
+
+            <propertygroup name="Beam Initial Curvature" caption="Beam Initial Curvature">
+                <property name="k11" caption="k11" control="float" default="0." />
+                <property name="k12" caption="k12" control="float" default="0." />
+                <property name="k13" caption="k13" control="float" default="0." />
+            </propertygroup>
+
+            <propertygroup name="Beam Obliqueness" caption="Beam Obliqueness">
+                <property name="cos(y1,x1)" caption="cos(y1,x1)" control="float" default="1." />
+                <property name="cos(y2,x1)" caption="cos(y2,x1)" control="float" default="0." />
+            </propertygroup>
+
+            <propertygroup name="Problem Control Parameters" caption="Problem Control Parameters" display="caption">
+
+                <propertygroup name="Analysis Type" caption="Analysis Type" control="select" default="Elastic" display="property">
+                    <attributes options="Elastic"/>
+                    <!-- <attributes options="Elastic,Thermoelastic,Conduction,Piezoelectric/Piezomagnetic,Thermoepiezoelectric/Thermopiezomagnetic,Piezoeletromagnetic,Thermopiezoeletromagnetic"/> -->
+
+                    <property name="Temperature Distribution Uniform" caption="Temperature Distribution" control="text" default="Uniform" readonly="true" visibleon="Elastic|Conduction|Piezoelectric/Piezomagnetic|Piezoeletromagnetic">
+                    </property>
+
+                    <property name="Temperature Distribution" caption="Temperature Distribution" control="select" default="Uniform" visibleon="Thermoelastic|Thermoepiezoelectric/Thermopiezomagnetic|Thermopiezoeletromagnetic">
+                        <attributes options="Uniform,Not-uniform"/>
+                    </property>
+
+                </propertygroup>
+
+                <property name="Element Type" caption="Element Type" control="select" default="Regular Elements">
+                    <attributes options="Regular Elements" />
+                    <!-- <attributes options="Regular Elements,One Dimension Degenerated,Two Dimension Degenerated" /> -->
+                </property>
+
+                <property name="Element Orientation" caption="Element Orientation" control="select" default="Global Coordinate System">
+                    <attributes options="Global Coordinate System" />
+                    <!-- <attributes options="Global Coordinate System,Element Coordinate System" /> -->
+                </property>
+
+            </propertygroup>
+
+            <propertygroup name="Aperiodic Control Parameters" caption="Aperiodic Control Parameters">
+                <property name="Aperiodic Along y1" caption="Aperiodic Along y1" control="select" default="No">
+                    <attributes options="Yes,No" />
+                </property>
+            </propertygroup>
+
+        </load>
+
+        <load name="plateHomogenization" version="1" caption="Plate/Shell Model Homogenization Setting" icon="plateModelHomAtTree" issupport="false" isload="true">
+            <callbacks>
+                <canadd>plateHomogenizationCanAddAtTree</canadd>
+				<oninit>plateHomogenizationOnInitAtTree</oninit>
+                <ongenerate>plateHomogenizationAtTree</ongenerate>
+				<OnRemove>HomogenizationSettingOnRemovetAtTree</OnRemove>
+            </callbacks>
+			
+            <propertygroup name="Homogenization Result Name" caption="Homogenization Result Name">
+                <property name="Name" caption="Name" control="text" default="" />
+            </propertygroup>	
+
+            <propertygroup name="Submodel" caption="Submodel">
+                <property name="Type of Plate Model" caption="Type of Plate/Shell Model" control="select" default="Kirchhoff-Love Model">
+                    <attributes options="Kirchhoff-Love Model" />
+                    <!-- <attributes options="Kirchhoff-Love Model,Reissner-Mindlin Model" /> -->
+                </property>
+            </propertygroup>
+
+            <propertygroup name="Plate Initial Curvature" caption="Plate/Shell Initial Curvature">
+                <property name="k12" caption="k12" control="float" default="0." />
+                <property name="k21" caption="k21" control="float" default="0." />
+            </propertygroup>
+
+            <propertygroup name="Problem Control Parameters" caption="Problem Control Parameters" display="caption">
+
+                <propertygroup name="Analysis Type" caption="Analysis Type" control="select" default="Elastic" display="property">
+                    <attributes options="Elastic"/>
+                    <!-- <attributes options="Elastic,Thermoelastic,Conduction,Piezoelectric/Piezomagnetic,Thermoepiezoelectric/Thermopiezomagnetic,Piezoeletromagnetic,Thermopiezoeletromagnetic"/> -->
+
+                    <property name="Temperature Distribution Uniform" caption="Temperature Distribution" control="text" default="Uniform" readonly="true" visibleon="Elastic|Conduction|Piezoelectric/Piezomagnetic|Piezoeletromagnetic">
+                    </property>
+
+                    <property name="Temperature Distribution" caption="Temperature Distribution" control="select" default="Uniform" visibleon="Thermoelastic|Thermoepiezoelectric/Thermopiezomagnetic|Thermopiezoeletromagnetic">
+                        <attributes options="Uniform,Not-uniform"/>
+                    </property>
+
+                </propertygroup>
+
+                <property name="Element Type" caption="Element Type" control="select" default="Regular Elements">
+                    <attributes options="Regular Elements" />
+                    <!-- <attributes options="Regular Elements,One Dimension Degenerated,Two Dimension Degenerated" /> -->
+                </property>
+
+                <property name="Element Orientation" caption="Element Orientation" control="select" default="Global Coordinate System">
+                    <attributes options="Global Coordinate System" />
+                    <!-- <attributes options="Global Coordinate System,Element Coordinate System" /> -->
+                </property>
+
+            </propertygroup>
+
+            <propertygroup name="Aperiodic Control Parameters" caption="Aperiodic Control Parameters">
+                <property name="Aperiodic Along y1" caption="Aperiodic Along y1" control="select" default="No">
+                    <attributes options="Yes,No" />
+                </property>
+                <property name="Aperiodic Along y2" caption="Aperiodic Along y2" control="select" default="No">
+                    <attributes options="Yes,No" />
+                </property>
+            </propertygroup>
+
+        </load>
+
+        <load name="solidHomogenization" version="1" caption="Solid Model Homogenization Setting" icon="solidModelHomAtTree" issupport="false" isload="true">
+		
+            <callbacks>
+                <canadd>solidHomogenizationCanAddAtTree</canadd>
+				<oninit>solidHomogenizationOnInitAtTree</oninit>
+                <ongenerate>solidHomogenizationAtTree</ongenerate>
+				<OnRemove>HomogenizationSettingOnRemovetAtTree</OnRemove>
+            </callbacks>
+
+            <propertygroup name="Homogenization Result Name" caption="Homogenization Result Name">
+                <property name="Name" caption="Name" control="text" default="" />
+            </propertygroup>	
+			
+            <propertygroup name="Problem Control Parameters" caption="Problem Control Parameters" display="caption">
+
+                <propertygroup name="Analysis Type" caption="Analysis Type" control="select" default="Elastic" display="property">
+                    <attributes options="Elastic"/>
+                    <!-- <attributes options="Elastic,Thermoelastic,Conduction,Piezoelectric/Piezomagnetic,Thermoepiezoelectric/Thermopiezomagnetic,Piezoeletromagnetic,Thermopiezoeletromagnetic"/> -->
+
+                    <property name="Temperature Distribution Uniform" caption="Temperature Distribution" control="text" default="Uniform" readonly="true" visibleon="Elastic|Conduction|Piezoelectric/Piezomagnetic|Piezoeletromagnetic">
+                    </property>
+
+                    <property name="Temperature Distribution" caption="Temperature Distribution" control="select" default="Uniform" visibleon="Thermoelastic|Thermoepiezoelectric/Thermopiezomagnetic|Thermopiezoeletromagnetic">
+                        <attributes options="Uniform,Not-uniform"/>
+                    </property>
+
+                </propertygroup>
+
+                <property name="Element Type" caption="Element Type" control="select" default="Regular Elements">
+                    <attributes options="Regular Elements" />
+                    <!-- <attributes options="Regular Elements,One Dimension Degenerated,Two Dimension Degenerated" /> -->
+                </property>
+
+                <property name="Element Orientation" caption="Element Orientation" control="select" default="Global Coordinate System">
+                    <attributes options="Global Coordinate System" />
+                    <!-- <attributes options="Global Coordinate System,Element Coordinate System" /> -->
+                </property>
+
+            </propertygroup>
+
+            <propertygroup name="Aperiodic Control Parameters" caption="Aperiodic Control Parameters">
+                <property name="Aperiodic Along y1" caption="Aperiodic Along y1" control="select" default="No">
+                    <attributes options="Yes,No" />
+                </property>
+                <property name="Aperiodic Along y2" caption="Aperiodic Along y2" control="select" default="No">
+                    <attributes options="Yes,No" />
+                </property>
+                <property name="Aperiodic Along y3" caption="Aperiodic Along y3" control="select" default="No">
+                    <attributes options="Yes,No" />
+                </property>
+            </propertygroup>
+
+        </load>
+
+        <object name="homogenizationResult" version="1" caption="Homogenization Result" icon="homogenizationResultAtTree">
+            <target type="analysis" location="post" />
+            <callbacks>
+                <canadd>homogenizationResultCanAddAtTree</canadd>
+                <OnGenerate>homogenizationResultAtTree</OnGenerate>
+            </callbacks>
+
+            <propertygroup name="Calculation Information" caption="Calculation Information">
+                <property name="Homogenization Time" caption="Homogenization Time" control="float" default="0" readonly="True" isparameter="True"/>
+            </propertygroup>
+            <propertygroup name="Model Information" caption="Model Information">
+                <property name="Macro Model" caption="Macro Model" control="text" default=" " readonly="True"/>
+            </propertygroup>
+            <propertygroup name="BeamStiffness" caption="The Effective Stiffness Matrix" display="caption" control="text" default="">
+                <callbacks>
+                    <isvisible>beamStiffnessVisible</isvisible>
+                </callbacks>
+                <property name="C11" caption="C11" control="float" readonly="True" isparameter="True"/>
+                <property name="C12" caption="C12" control="float" readonly="True" isparameter="True"/>
+                <property name="C13" caption="C13" control="float" readonly="True" isparameter="True"/>
+                <property name="C14" caption="C14" control="float" readonly="True" isparameter="True"/>
+                <property name="C22" caption="C22" control="float" readonly="True" isparameter="True"/>
+                <property name="C23" caption="C23" control="float" readonly="True" isparameter="True"/>
+                <property name="C24" caption="C24" control="float" readonly="True" isparameter="True"/>
+                <property name="C33" caption="C33" control="float" readonly="True" isparameter="True"/>
+                <property name="C34" caption="C34" control="float" readonly="True" isparameter="True"/>
+                <property name="C44" caption="C44" control="float" readonly="True" isparameter="True"/>
+            </propertygroup>
+            <propertygroup name="BeamCompliance" caption="The Effective Compliance Matrix" display="caption" control="text" default="">
+                <callbacks>
+                    <isvisible>beamComplianceVisible</isvisible>
+                </callbacks>
+                <property name="S11" caption="S11" control="float" readonly="True" isparameter="True"/>
+                <property name="S12" caption="S12" control="float" readonly="True" isparameter="True"/>
+                <property name="S13" caption="S13" control="float" readonly="True" isparameter="True"/>
+                <property name="S14" caption="S14" control="float" readonly="True" isparameter="True"/>
+                <property name="S22" caption="S22" control="float" readonly="True" isparameter="True"/>
+                <property name="S23" caption="S23" control="float" readonly="True" isparameter="True"/>
+                <property name="S24" caption="S24" control="float" readonly="True" isparameter="True"/>
+                <property name="S33" caption="S33" control="float" readonly="True" isparameter="True"/>
+                <property name="S34" caption="S34" control="float" readonly="True" isparameter="True"/>
+                <property name="S44" caption="S44" control="float" readonly="True" isparameter="True"/>
+            </propertygroup>
+            <propertygroup name="BeamTimoshenkoStiffness" caption="The Effective Timoshenko Stiffness Matrix (1-extension; 2,3-shear; 4-torsion; 5,6-bending)" display="caption" control="text" default="">
+                <callbacks>
+                    <isvisible>beamTimoshenkoStiffnessVisible</isvisible>
+                </callbacks>
+                <property name="C11" caption="C11" control="float" readonly="True" isparameter="True"/>
+                <property name="C12" caption="C12" control="float" readonly="True" isparameter="True"/>
+                <property name="C13" caption="C13" control="float" readonly="True" isparameter="True"/>
+                <property name="C14" caption="C14" control="float" readonly="True" isparameter="True"/>
+				<property name="C15" caption="C15" control="float" readonly="True" isparameter="True"/>
+				<property name="C16" caption="C16" control="float" readonly="True" isparameter="True"/>
+                <property name="C22" caption="C22" control="float" readonly="True" isparameter="True"/>
+                <property name="C23" caption="C23" control="float" readonly="True" isparameter="True"/>
+                <property name="C24" caption="C24" control="float" readonly="True" isparameter="True"/>
+				<property name="C25" caption="C25" control="float" readonly="True" isparameter="True"/>
+				<property name="C26" caption="C26" control="float" readonly="True" isparameter="True"/>
+                <property name="C33" caption="C33" control="float" readonly="True" isparameter="True"/>
+                <property name="C34" caption="C34" control="float" readonly="True" isparameter="True"/>
+				<property name="C35" caption="C35" control="float" readonly="True" isparameter="True"/>
+				<property name="C36" caption="C36" control="float" readonly="True" isparameter="True"/>
+                <property name="C44" caption="C44" control="float" readonly="True" isparameter="True"/>
+				<property name="C45" caption="C45" control="float" readonly="True" isparameter="True"/>
+				<property name="C46" caption="C46" control="float" readonly="True" isparameter="True"/>
+				<property name="C55" caption="C55" control="float" readonly="True" isparameter="True"/>
+				<property name="C56" caption="C56" control="float" readonly="True" isparameter="True"/>
+				<property name="C66" caption="C66" control="float" readonly="True" isparameter="True"/>
+            </propertygroup>
+            <propertygroup name="BeamTimoshenkoCompliance" caption="The Effective Timoshenko Compliance Matrix (1-extension; 2,3-shear; 4-torsion; 5,6-bending)" display="caption" control="text" default="">
+                <callbacks>
+                    <isvisible>beamTimoshenkoComplianceVisible</isvisible>
+                </callbacks>
+                <property name="S11" caption="S11" control="float" readonly="True" isparameter="True"/>
+                <property name="S12" caption="S12" control="float" readonly="True" isparameter="True"/>
+                <property name="S13" caption="S13" control="float" readonly="True" isparameter="True"/>
+                <property name="S14" caption="S14" control="float" readonly="True" isparameter="True"/>
+				<property name="S15" caption="S15" control="float" readonly="True" isparameter="True"/>
+				<property name="S16" caption="S16" control="float" readonly="True" isparameter="True"/>
+                <property name="S22" caption="S22" control="float" readonly="True" isparameter="True"/>
+                <property name="S23" caption="S23" control="float" readonly="True" isparameter="True"/>
+                <property name="S24" caption="S24" control="float" readonly="True" isparameter="True"/>
+				<property name="S25" caption="S25" control="float" readonly="True" isparameter="True"/>
+				<property name="S26" caption="S26" control="float" readonly="True" isparameter="True"/>
+                <property name="S33" caption="S33" control="float" readonly="True" isparameter="True"/>
+                <property name="S34" caption="S34" control="float" readonly="True" isparameter="True"/>
+				<property name="S35" caption="S35" control="float" readonly="True" isparameter="True"/>
+				<property name="S36" caption="S36" control="float" readonly="True" isparameter="True"/>
+                <property name="S44" caption="S44" control="float" readonly="True" isparameter="True"/>
+				<property name="S45" caption="S45" control="float" readonly="True" isparameter="True"/>
+				<property name="S46" caption="S46" control="float" readonly="True" isparameter="True"/>
+				<property name="S55" caption="S55" control="float" readonly="True" isparameter="True"/>
+				<property name="S56" caption="S56" control="float" readonly="True" isparameter="True"/>
+				<property name="S66" caption="S66" control="float" readonly="True" isparameter="True"/>
+            </propertygroup>
+            <propertygroup name="BeamShearCenter" caption="Shear Center Location" display="caption" control="text" default="">
+                <callbacks>
+                    <isvisible>beamShearCenterVisible</isvisible>
+                </callbacks>
+                <property name="y1" caption="y1" control="float" readonly="True" isparameter="True"/>
+                <property name="y2" caption="y2" control="float" readonly="True" isparameter="True"/>
+            </propertygroup>
+            <propertygroup name="PlateStiffness" caption="The Effective Stiffness Matrix" display="caption" control="text" default="">
+                <callbacks>
+                    <isvisible>plateStiffnessVisible</isvisible>
+                </callbacks>
+                <property name="A11" caption="A11" control="float" readonly="True" isparameter="True"/>
+                <property name="A12" caption="A12" control="float" readonly="True" isparameter="True"/>
+                <property name="A16" caption="A16" control="float" readonly="True" isparameter="True"/>
+                <property name="A22" caption="A22" control="float" readonly="True" isparameter="True"/>
+                <property name="A26" caption="A26" control="float" readonly="True" isparameter="True"/>
+                <property name="A66" caption="A66" control="float" readonly="True" isparameter="True"/>
+                <property name="B11" caption="B11" control="float" readonly="True" isparameter="True"/>
+                <property name="B12" caption="B12" control="float" readonly="True" isparameter="True"/>
+                <property name="B16" caption="B16" control="float" readonly="True" isparameter="True"/>
+                <property name="B22" caption="B22" control="float" readonly="True" isparameter="True"/>
+                <property name="B26" caption="B26" control="float" readonly="True" isparameter="True"/>
+                <property name="B66" caption="B66" control="float" readonly="True" isparameter="True"/>
+                <property name="D11" caption="D11" control="float" readonly="True" isparameter="True"/>
+                <property name="D12" caption="D12" control="float" readonly="True" isparameter="True"/>
+                <property name="D16" caption="D16" control="float" readonly="True" isparameter="True"/>
+                <property name="D22" caption="D22" control="float" readonly="True" isparameter="True"/>
+                <property name="D26" caption="D26" control="float" readonly="True" isparameter="True"/>
+                <property name="D66" caption="D66" control="float" readonly="True" isparameter="True"/>
+            </propertygroup>
+            <propertygroup name="PlateCompliance" caption="The Effective Compliance Matrix" display="caption" control="text" default="">
+                <callbacks>
+                    <isvisible>plateComplianceVisible</isvisible>
+                </callbacks>
+                <property name="S11" caption="S11" control="float" readonly="True" isparameter="True"/>
+                <property name="S12" caption="S12" control="float" readonly="True" isparameter="True"/>
+                <property name="S13" caption="S13" control="float" readonly="True" isparameter="True"/>
+                <property name="S14" caption="S14" control="float" readonly="True" isparameter="True"/>
+				<property name="S15" caption="S15" control="float" readonly="True" isparameter="True"/>
+				<property name="S16" caption="S16" control="float" readonly="True" isparameter="True"/>
+                <property name="S22" caption="S22" control="float" readonly="True" isparameter="True"/>
+                <property name="S23" caption="S23" control="float" readonly="True" isparameter="True"/>
+                <property name="S24" caption="S24" control="float" readonly="True" isparameter="True"/>
+				<property name="S25" caption="S25" control="float" readonly="True" isparameter="True"/>
+				<property name="S26" caption="S26" control="float" readonly="True" isparameter="True"/>
+                <property name="S33" caption="S33" control="float" readonly="True" isparameter="True"/>
+                <property name="S34" caption="S34" control="float" readonly="True" isparameter="True"/>
+				<property name="S35" caption="S35" control="float" readonly="True" isparameter="True"/>
+				<property name="S36" caption="S36" control="float" readonly="True" isparameter="True"/>
+                <property name="S44" caption="S44" control="float" readonly="True" isparameter="True"/>
+				<property name="S45" caption="S45" control="float" readonly="True" isparameter="True"/>
+				<property name="S46" caption="S46" control="float" readonly="True" isparameter="True"/>
+				<property name="S55" caption="S55" control="float" readonly="True" isparameter="True"/>
+				<property name="S56" caption="S56" control="float" readonly="True" isparameter="True"/>
+				<property name="S66" caption="S66" control="float" readonly="True" isparameter="True"/>
+            </propertygroup>
+            <propertygroup name="PlateInPlane" caption="In-Plane Properties" display="caption" control="text" default="">
+                <callbacks>
+                    <isvisible>plateInPlaneVisible</isvisible>
+                </callbacks>
+                <property name="E1" caption="E1" control="float" readonly="True" isparameter="True"/>
+                <property name="E2" caption="E2" control="float" readonly="True" isparameter="True"/>
+                <property name="G12" caption="G12" control="float" readonly="True" isparameter="True"/>
+                <property name="nu12" caption="nu12" control="float" readonly="True" isparameter="True"/>
+				<property name="eta121" caption="eta121" control="float" readonly="True" isparameter="True"/>
+				<property name="eta122" caption="eta122" control="float" readonly="True" isparameter="True"/>
+            </propertygroup>
+            <propertygroup name="PlateFlexural" caption="Flexural Properties" display="caption" control="text" default="">
+                <callbacks>
+                    <isvisible>plateFlexuralVisible</isvisible>
+                </callbacks>
+                <property name="E1" caption="E1" control="float" readonly="True" isparameter="True"/>
+                <property name="E2" caption="E2" control="float" readonly="True" isparameter="True"/>
+                <property name="G12" caption="G12" control="float" readonly="True" isparameter="True"/>
+                <property name="nu12" caption="nu12" control="float" readonly="True" isparameter="True"/>
+				<property name="eta121" caption="eta121" control="float" readonly="True" isparameter="True"/>
+				<property name="eta122" caption="eta122" control="float" readonly="True" isparameter="True"/>
+            </propertygroup>
+            <propertygroup name="SolidStiffness" caption="The Effective Stiffness Matrix" display="caption" control="text" default="">
+                <callbacks>
+                    <isvisible>solidStiffnessVisible</isvisible>
+                </callbacks>
+                <property name="C11" caption="C11" control="float" readonly="True" isparameter="True"/>
+                <property name="C12" caption="C12" control="float" readonly="True" isparameter="True"/>
+                <property name="C13" caption="C13" control="float" readonly="True" isparameter="True"/>
+                <property name="C14" caption="C14" control="float" readonly="True" isparameter="True"/>
+                <property name="C15" caption="C15" control="float" readonly="True" isparameter="True"/>
+                <property name="C16" caption="C16" control="float" readonly="True" isparameter="True"/>
+                <property name="C22" caption="C22" control="float" readonly="True" isparameter="True"/>
+                <property name="C23" caption="C23" control="float" readonly="True" isparameter="True"/>
+                <property name="C24" caption="C24" control="float" readonly="True" isparameter="True"/>
+                <property name="C25" caption="C25" control="float" readonly="True" isparameter="True"/>
+                <property name="C26" caption="C26" control="float" readonly="True" isparameter="True"/>
+                <property name="C33" caption="C33" control="float" readonly="True" isparameter="True"/>
+                <property name="C34" caption="C34" control="float" readonly="True" isparameter="True"/>
+                <property name="C35" caption="C35" control="float" readonly="True" isparameter="True"/>
+                <property name="C36" caption="C36" control="float" readonly="True" isparameter="True"/>
+                <property name="C44" caption="C44" control="float" readonly="True" isparameter="True"/>
+                <property name="C45" caption="C45" control="float" readonly="True" isparameter="True"/>
+                <property name="C46" caption="C46" control="float" readonly="True" isparameter="True"/>
+                <property name="C55" caption="C55" control="float" readonly="True" isparameter="True"/>
+                <property name="C56" caption="C56" control="float" readonly="True" isparameter="True"/>
+                <property name="C66" caption="C66" control="float" readonly="True" isparameter="True"/>
+            </propertygroup>
+            <propertygroup name="SolidCompliance" caption="The Effective Compliance Matrix" display="caption" control="text" default="">
+                <callbacks>
+                    <isvisible>solidComplianceVisible</isvisible>
+                </callbacks>
+                <property name="S11" caption="S11" control="float" readonly="True" isparameter="True"/>
+                <property name="S12" caption="S12" control="float" readonly="True" isparameter="True"/>
+                <property name="S13" caption="S13" control="float" readonly="True" isparameter="True"/>
+                <property name="S14" caption="S14" control="float" readonly="True" isparameter="True"/>
+                <property name="S15" caption="S15" control="float" readonly="True" isparameter="True"/>
+                <property name="S16" caption="S16" control="float" readonly="True" isparameter="True"/>
+                <property name="S22" caption="S22" control="float" readonly="True" isparameter="True"/>
+                <property name="S23" caption="S23" control="float" readonly="True" isparameter="True"/>
+                <property name="S24" caption="S24" control="float" readonly="True" isparameter="True"/>
+                <property name="S25" caption="S25" control="float" readonly="True" isparameter="True"/>
+                <property name="S26" caption="S26" control="float" readonly="True" isparameter="True"/>
+                <property name="S33" caption="S33" control="float" readonly="True" isparameter="True"/>
+                <property name="S34" caption="S34" control="float" readonly="True" isparameter="True"/>
+                <property name="S35" caption="S35" control="float" readonly="True" isparameter="True"/>
+                <property name="S36" caption="S36" control="float" readonly="True" isparameter="True"/>
+                <property name="S44" caption="S44" control="float" readonly="True" isparameter="True"/>
+                <property name="S45" caption="S45" control="float" readonly="True" isparameter="True"/>
+                <property name="S46" caption="S46" control="float" readonly="True" isparameter="True"/>
+                <property name="S55" caption="S55" control="float" readonly="True" isparameter="True"/>
+                <property name="S56" caption="S56" control="float" readonly="True" isparameter="True"/>
+                <property name="S66" caption="S66" control="float" readonly="True" isparameter="True"/>
+            </propertygroup>
+            <propertygroup name="EngineeringConstant" caption="The Engineering Constants from Solid Model (Approximated as Orthotropic)" display="caption" control="text" default="">
+                <callbacks>
+                    <isvisible>engineeringConstantVisible</isvisible>
+                </callbacks>
+                <property name="E1" caption="E1" control="float" readonly="True" isparameter="True"/>
+                <property name="E2" caption="E2" control="float" readonly="True" isparameter="True"/>
+                <property name="E3" caption="E3" control="float" readonly="True" isparameter="True"/>
+                <property name="G12" caption="G12" control="float" readonly="True" isparameter="True"/>
+                <property name="G13" caption="G13" control="float" readonly="True" isparameter="True"/>
+                <property name="G23" caption="G23" control="float" readonly="True" isparameter="True"/>
+                <property name="nu12" caption="nu12" control="float" readonly="True" isparameter="True"/>
+                <property name="nu13" caption="nu13" control="float" readonly="True" isparameter="True"/>
+                <property name="nu23" caption="nu23" control="float" readonly="True" isparameter="True"/>
+            </propertygroup>
+            <propertygroup name="Density" caption="Effective Density" display="caption" control="text" default="">
+                <callbacks>
+                    <isvisible>densityVisible</isvisible>
+                </callbacks>
+				<property name="Effective Density" caption="Effective Density" control="float" readonly="True" isparameter="True"/>
+            </propertygroup>
+			                
+
+        </object>
+
+        <!-- Structural Analysis Toolbar -->
+		
+        <object name="importHomogenizationResult" version="1" caption="Import Homogenization Result" icon="importHomogenizationResultAtTree">
+			<target type="datamodel" />
+            <callbacks>
+				<GetPreCommands>importHomogenizationResultGetPreCommandsAtTree</GetPreCommands>
+            </callbacks>
+            <propertygroup name="Body Selection" caption="Body Selection">
+                <property name="Select Body(s)" caption="Select Body(s)" control="geometry_selection">
+                    <attributes selection_filter="body"/>
+                </property>
+            </propertygroup>
+            <propertygroup name="Information Source" caption="Information Source">
+                <propertygroup name="Select" caption="Select" control="select" default="From Homogenization Result" display="property">
+                    <attributes options="User Input,From Homogenization Result" />
+					<property name="Homogenization Result Name" caption="Homogenization Result Name" control="select" default="" visibleon="From Homogenization Result" >
+						<callbacks>
+							<onactivate>importHomogenizationResultInformationSourceOnActivate</onactivate>
+						</callbacks>
+					</property>
+                </propertygroup>		
+            </propertygroup>
+            <propertygroup name="Model Information" caption="Model Information">
+                <property name="Macro Model" caption="Macro Model" control="text" default="" readonly="True"/>
+            </propertygroup>
+            <propertygroup name="BeamTimoshenkoStiffness" caption="The Effective Beam Stiffness Matrix" display="caption" control="text" default="">
+                <callbacks>
+                    <isvisible>beamTimoshenkoStiffnessVisible</isvisible>
+                </callbacks>
+                <property name="C11" caption="C11" control="float" />
+                <property name="C12" caption="C12" control="float" />
+                <property name="C13" caption="C13" control="float" />
+                <property name="C14" caption="C14" control="float" />
+				<property name="C15" caption="C15" control="float" />
+				<property name="C16" caption="C16" control="float" />
+                <property name="C22" caption="C22" control="float" />
+                <property name="C23" caption="C23" control="float" />
+                <property name="C24" caption="C24" control="float" />
+				<property name="C25" caption="C25" control="float" />
+				<property name="C26" caption="C26" control="float" />
+                <property name="C33" caption="C33" control="float" />
+                <property name="C34" caption="C34" control="float" />
+				<property name="C35" caption="C35" control="float" />
+				<property name="C36" caption="C36" control="float" />
+                <property name="C44" caption="C44" control="float" />
+				<property name="C45" caption="C45" control="float" />
+				<property name="C46" caption="C46" control="float" />
+				<property name="C55" caption="C55" control="float" />
+				<property name="C56" caption="C56" control="float" />
+				<property name="C66" caption="C66" control="float" />
+            </propertygroup>
+            <propertygroup name="PlateReissnerStiffness" caption="The Effective Plate Stiffness Matrix" display="caption" control="text" default="">
+                <callbacks>
+                    <isvisible>plateReissnerStiffnessVisible</isvisible>
+                </callbacks>
+                <property name="A11" caption="A11" control="float" default="0."/>
+                <property name="A12" caption="A12" control="float" default="0."/>
+                <property name="A16" caption="A16" control="float" default="0."/>
+                <property name="A22" caption="A22" control="float" default="0."/>
+                <property name="A26" caption="A26" control="float" default="0."/>
+                <property name="A66" caption="A66" control="float" default="0."/>
+                <property name="B11" caption="B11" control="float" default="0."/>
+                <property name="B12" caption="B12" control="float" default="0."/>
+                <property name="B16" caption="B16" control="float" default="0."/>
+                <property name="B22" caption="B22" control="float" default="0."/>
+                <property name="B26" caption="B26" control="float" default="0."/>
+                <property name="B66" caption="B66" control="float" default="0."/>
+                <property name="D11" caption="D11" control="float" default="0."/>
+                <property name="D12" caption="D12" control="float" default="0."/>
+                <property name="D16" caption="D16" control="float" default="0."/>
+                <property name="D22" caption="D22" control="float" default="0."/>
+                <property name="D26" caption="D26" control="float" default="0."/>
+                <property name="D66" caption="D66" control="float" default="0."/>
+                <property name="C11" caption="C11" control="float" default="0."/>
+                <property name="C12" caption="C12" control="float" default="0."/>
+                <property name="C22" caption="C22" control="float" default="0."/>
+            </propertygroup>
+            <propertygroup name="SolidStiffness" caption="The Effective Stiffness Matrix" display="caption" control="text" default="">
+                <callbacks>
+                    <isvisible>solidStiffnessVisible</isvisible>
+                </callbacks>
+                <property name="C11" caption="C11" control="float" />
+                <property name="C12" caption="C12" control="float" />
+                <property name="C13" caption="C13" control="float" />
+                <property name="C14" caption="C14" control="float" />
+                <property name="C15" caption="C15" control="float" />
+                <property name="C16" caption="C16" control="float" />
+                <property name="C22" caption="C22" control="float" />
+                <property name="C23" caption="C23" control="float" />
+                <property name="C24" caption="C24" control="float" />
+                <property name="C25" caption="C25" control="float" />
+                <property name="C26" caption="C26" control="float" />
+                <property name="C33" caption="C33" control="float" />
+                <property name="C34" caption="C34" control="float" />
+                <property name="C35" caption="C35" control="float" />
+                <property name="C36" caption="C36" control="float" />
+                <property name="C44" caption="C44" control="float" />
+                <property name="C45" caption="C45" control="float" />
+                <property name="C46" caption="C46" control="float" />
+                <property name="C55" caption="C55" control="float" />
+                <property name="C56" caption="C56" control="float" />
+                <property name="C66" caption="C66" control="float" />
+            </propertygroup>
+            <propertygroup name="Density" caption="Effective Density" display="caption" control="text" default="">
+				<property name="Effective Density" caption="Effective Density" control="float" />
+            </propertygroup>
+		</object>
+			
+        <object name="extractResult" version="1" caption="Extract Result" icon="extractResultAtTree">
+			<target type="analysis" location="post" />
+            <callbacks>
+                <canadd>extractResultCanAddAtTree</canadd>
+				<OnInit>extractResultOnInitAtTree</OnInit>
+				<getsolvecommands>extractResultGetSolveCommandsAtTree</getsolvecommands>
+				<getpostcommands>extractResultGetPostCommandsAtTree</getpostcommands>
+                <ongenerate>extractResultOnGenerateAtTree</ongenerate>
+				<OnRemove>extractResulOnRemovetAtTree</OnRemove>
+            </callbacks>
+			
+            <propertygroup name="Dehomogenization Information" caption="Dehomogenization Information">
+                <property name="Dehomogenization at the same time" caption="Dehomogenization at the same time?" control="select" default="No">
+                    <attributes options="Yes,No"/>
+                </property>
+            </propertygroup>
+			
+            <propertygroup name="Element Selection" caption="Element Selection">
+                <property name="Select Element(s)" caption="Select Element(s)" control="geometry_selection">
+                    <attributes selection_filter="element"/>
+                </property>
+            </propertygroup>
+
+            <propertygroup name="Extraction Information" caption="Extraction Information">
+                <property name="Extraction Name" caption="Extraction Name" control="text" default=" " readonly="True"/>
+                <property name="Macro Model" caption="Macro Model" control="text" default=" " readonly="True"/>
+            </propertygroup>
+
+            <propertygroup name="Macro Displacements" caption="Macro Displacements" readonly="True" display="caption" control="text" default="">
+                <callbacks>
+                    <isvisible>displacementExtractResultVisible</isvisible>
+                </callbacks>
+                <property name="v1" caption="v1" control="text" default="0." />
+                <property name="v2" caption="v2" control="text" default="0." />
+                <property name="v3" caption="v3" control="text" default="0." />
+            </propertygroup>
+            <propertygroup name="Macro Rotations" caption="Macro Rotations" readonly="True" display="caption" control="text" default="">
+                <callbacks>
+                    <isvisible>rotationExtractResultVisible</isvisible>
+                </callbacks>
+                <property name="C11" caption="C11" control="text" default="0." />
+                <property name="C12" caption="C12" control="text" default="0." />
+                <property name="C13" caption="C13" control="text" default="0." />
+                <property name="C21" caption="C21" control="text" default="0." />
+                <property name="C22" caption="C22" control="text" default="0." />
+                <property name="C23" caption="C23" control="text" default="0." />
+                <property name="C31" caption="C31" control="text" default="0." />
+                <property name="C32" caption="C32" control="text" default="0." />
+                <property name="C33" caption="C33" control="text" default="0." />
+            </propertygroup>
+            <propertygroup name="Macro Generalized Strains for Beam Model" caption="Macro Generalized Strains" readonly="True" display="caption" control="text" default="">
+                <callbacks>
+                    <isvisible>beamStrainExtractResultVisible</isvisible>
+                </callbacks>
+                <property name="epsilon11" caption="epsilon11" control="text" default="0." />
+				<property name="gamma12" caption="gamma12" control="text" default="0." />
+				<property name="gamma13" caption="gamma13" control="text" default="0." />
+                <property name="kappa11" caption="kappa11" control="text" default="0." />
+                <property name="kappa12" caption="kappa12" control="text" default="0." />
+                <property name="kappa13" caption="kappa13" control="text" default="0." />
+            </propertygroup>
+            <propertygroup name="Macro Generalized Stresses for Beam Model" caption="Macro Generalized Stresses" readonly="True" display="caption" control="text" default="">
+                <callbacks>
+                    <isvisible>beamStressExtractResultVisible</isvisible>
+                </callbacks>
+				<property name="F1" caption="F1" control="float" default="0." />
+				<property name="F2" caption="F2" control="float" default="0." />
+				<property name="F3" caption="F3" control="float" default="0." />
+				<property name="M1" caption="M1" control="float" default="0." />
+				<property name="M2" caption="M2" control="float" default="0." />
+				<property name="M3" caption="M3" control="float" default="0." />
+            </propertygroup>
+            <propertygroup name="Macro Generalized Strains for Plate Model" caption="Macro Generalized Strains" readonly="True" display="caption" control="text" default="">
+                <callbacks>
+                    <isvisible>plateStrainExtractResultVisible</isvisible>
+                </callbacks>
+				<property name="epsilon11" caption="epsilon11" control="float" default="0." />
+				<property name="epsilon22" caption="epsilon22" control="float" default="0." />
+				<property name="2epsilon12" caption="2epsilon12" control="float" default="0." />
+				<property name="kappa11" caption="kappa11" control="float" default="0." />
+				<property name="kappa22" caption="kappa22" control="float" default="0." />
+				<property name="2kappa12" caption="2kappa12" control="float" default="0." />
+				<property name="gamma13" caption="gamma13" control="float" default="0." />
+				<property name="gamma23" caption="gamma23" control="float" default="0." />
+            </propertygroup>
+            <propertygroup name="Macro Generalized Stresses for Plate Model" caption="Macro Generalized Stresses" readonly="True" display="caption" control="text" default="">
+                <callbacks>
+                    <isvisible>plateStressExtractResultVisible</isvisible>
+                </callbacks>
+				<property name="N11" caption="N11" control="float" default="0." />
+				<property name="N22" caption="N22" control="float" default="0." />
+				<property name="N12" caption="N12" control="float" default="0." />
+				<property name="M11" caption="M11" control="float" default="0." />
+				<property name="M22" caption="M22" control="float" default="0." />
+				<property name="M12" caption="M12" control="float" default="0." />
+				<property name="N13" caption="N13" control="float" default="0." />
+				<property name="N23" caption="N23" control="float" default="0." />
+            </propertygroup>
+            <propertygroup name="Macro Generalized Strains for Solid Model" caption="Macro Generalized Strains" readonly="True" display="caption" control="text" default="">
+                <callbacks>
+                    <isvisible>solidStrainExtractResultVisible</isvisible>
+                </callbacks>
+                <property name="epsilon11" caption="epsilon11" control="text" default="0." />
+                <property name="epsilon22" caption="epsilon22" control="text" default="0." />
+                <property name="epsilon33" caption="epsilon33" control="text" default="0." />
+                <property name="2epsilon23" caption="2epsilon23" control="text" default="0." />
+                <property name="2epsilon13" caption="2epsilon13" control="text" default="0." />
+                <property name="2epsilon12" caption="2epsilon12" control="text" default="0." />
+            </propertygroup>
+            <propertygroup name="Macro Generalized Stresses for Solid Model" caption="Macro Generalized Stresses" readonly="True" display="caption" control="text" default="">
+                <callbacks>
+                    <isvisible>solidStressExtractResultVisible</isvisible>
+                </callbacks>
+                <property name="sigma11" caption="sigma11" control="text" default="0." />
+                <property name="sigma22" caption="sigma22" control="text" default="0." />
+                <property name="sigma33" caption="sigma33" control="text" default="0." />
+                <property name="sigma23" caption="sigma23" control="text" default="0." />
+                <property name="sigma13" caption="sigma13" control="text" default="0." />
+                <property name="sigma12" caption="sigma12" control="text" default="0." />
+            </propertygroup>
+        </object>
+
+        <!-- Dehomogenization Toolbar -->
+
+        <load name="beamDehomogenization" version="1" caption="Beam Model Dehomogenization Setting" icon="beamModelDehomAtTree" issupport="false" isload="true">
+            <callbacks>
+                <canadd>beamDehomogenizationCanAddAtTree</canadd>
+				<OnInit>beamDehomogenizationOnInitAtTree</OnInit>
+                <ongenerate>beamDehomogenizationAtTree</ongenerate>
+            </callbacks>
+            <propertygroup name="Information Source" caption="Information Source">
+                <propertygroup name="Select" caption="Select" control="select" default="User Input" display="property">
+                    <attributes options="User Input,From Structural Analysis" />
+					<property name="Extraction Name" caption="Extraction Name" control="select" default="" visibleon="From Structural Analysis" >
+						<callbacks>
+							<onactivate>extractionNameBeamModelOnActivate</onactivate>
+						</callbacks>
+					</property>
+                </propertygroup>
+            </propertygroup>
+            <propertygroup name="Macro Displacements" caption="Macro Displacements">
+                <property name="v1" caption="v1" control="float" default="0." />
+                <property name="v2" caption="v2" control="float" default="0." />
+                <property name="v3" caption="v3" control="float" default="0." />
+            </propertygroup>
+            <propertygroup name="Macro Rotations" caption="Macro Rotations">
+                <property name="C11" caption="C11" control="float" default="1." />
+                <property name="C12" caption="C12" control="float" default="0." />
+                <property name="C13" caption="C13" control="float" default="0." />
+                <property name="C21" caption="C21" control="float" default="0." />
+                <property name="C22" caption="C22" control="float" default="1." />
+                <property name="C23" caption="C23" control="float" default="0." />
+                <property name="C31" caption="C31" control="float" default="0." />
+                <property name="C32" caption="C32" control="float" default="0." />
+                <property name="C33" caption="C33" control="float" default="1." />
+            </propertygroup>
+			<propertygroup name="Macro Generalized StrainStress" caption="Macro Generalized Strains/Stresses" display="caption" control="text">
+                <propertygroup name="Macro Model" caption="Macro Model" control="select" default="Euler-Bernoulli Beam Model" display="property">
+					<attributes options="Euler-Bernoulli Beam Model,Timoshenko Beam Model" />
+					<propertygroup name="Method1" caption="Method" control="select" default="Generalized Strain" display="property" visibleon="Euler-Bernoulli Beam Model">
+						<attributes options="Generalized Strain,Generalized Stress"/>
+						<property name="epsilon11" caption="epsilon11" control="float" default="0." visibleon="Generalized Strain" />
+						<property name="kappa11" caption="kappa11" control="float" default="0." visibleon="Generalized Strain" />
+						<property name="kappa12" caption="kappa12" control="float" default="0." visibleon="Generalized Strain" />
+						<property name="kappa13" caption="kappa13" control="float" default="0." visibleon="Generalized Strain" />
+						<property name="F1" caption="F1" control="float" default="0." visibleon="Generalized Stress" />
+						<property name="M1" caption="M1" control="float" default="0." visibleon="Generalized Stress" />
+						<property name="M2" caption="M2" control="float" default="0." visibleon="Generalized Stress" />
+						<property name="M3" caption="M3" control="float" default="0." visibleon="Generalized Stress" />
+					</propertygroup>
+					<propertygroup name="Method2" caption="Method" control="select" default="Generalized Strain" display="property" visibleon="Timoshenko Beam Model">
+						<attributes options="Generalized Strain,Generalized Stress"/>
+						<property name="epsilon11" caption="epsilon11" control="float" default="0." visibleon="Generalized Strain" />
+						<property name="gamma12" caption="gamma12" control="float" default="0." visibleon="Generalized Strain" />
+						<property name="gamma13" caption="gamma13" control="float" default="0." visibleon="Generalized Strain" />
+						<property name="kappa11" caption="kappa11" control="float" default="0." visibleon="Generalized Strain" />
+						<property name="kappa12" caption="kappa12" control="float" default="0." visibleon="Generalized Strain" />
+						<property name="kappa13" caption="kappa13" control="float" default="0." visibleon="Generalized Strain" />
+						<property name="F1" caption="F1" control="float" default="0." visibleon="Generalized Stress" />
+						<property name="F2" caption="F2" control="float" default="0." visibleon="Generalized Stress" />
+						<property name="F3" caption="F3" control="float" default="0." visibleon="Generalized Stress" />
+						<property name="M1" caption="M1" control="float" default="0." visibleon="Generalized Stress" />
+						<property name="M2" caption="M2" control="float" default="0." visibleon="Generalized Stress" />
+						<property name="M3" caption="M3" control="float" default="0." visibleon="Generalized Stress" />
+					</propertygroup>
+				</propertygroup>
+			</propertygroup>
+			
+        </load>
+
+        <load name="plateDehomogenization" version="1" caption="Plate/Shell Model Dehomogenization Setting" icon="plateModelDehomAtTree" issupport="false" isload="true">
+            <callbacks>
+                <canadd>plateDehomogenizationCanAddAtTree</canadd>
+				<OnInit>plateDehomogenizationOnInitAtTree</OnInit>
+                <ongenerate>plateDehomogenizationAtTree</ongenerate>
+            </callbacks>
+            <propertygroup name="Information Source" caption="Information Source">
+                <propertygroup name="Select" caption="Select" control="select" default="User Input" display="property">
+                    <attributes options="User Input,From Structural Analysis" />
+					<property name="Extraction Name" caption="Extraction Name" control="select" default="" visibleon="From Structural Analysis" >
+						<callbacks>
+							<onactivate>extractionNamePlateModelOnActivate</onactivate>
+						</callbacks>
+					</property>
+                </propertygroup>
+            </propertygroup>
+            <propertygroup name="Macro Displacements" caption="Macro Displacements">
+                <property name="v1" caption="v1" control="float" default="0." />
+                <property name="v2" caption="v2" control="float" default="0." />
+                <property name="v3" caption="v3" control="float" default="0." />
+            </propertygroup>
+            <propertygroup name="Macro Rotations" caption="Macro Rotations">
+                <property name="C11" caption="C11" control="float" default="1." />
+                <property name="C12" caption="C12" control="float" default="0." />
+                <property name="C13" caption="C13" control="float" default="0." />
+                <property name="C21" caption="C21" control="float" default="0." />
+                <property name="C22" caption="C22" control="float" default="1." />
+                <property name="C23" caption="C23" control="float" default="0." />
+                <property name="C31" caption="C31" control="float" default="0." />
+                <property name="C32" caption="C32" control="float" default="0." />
+                <property name="C33" caption="C33" control="float" default="1." />
+            </propertygroup>
+			<propertygroup name="Macro Generalized StrainStress" caption="Macro Generalized Strains/Stresses" display="caption" control="text">
+                <propertygroup name="Macro Model" caption="Macro Model" control="select" default="Kirchhoff-Love Model" display="property">
+					<attributes options="Kirchhoff-Love Model" />
+					<!-- <attributes options="Kirchhoff-Love Model,Reissner-Mindlin Model" /> -->
+					<propertygroup name="Method1" caption="Method" control="select" default="Generalized Strain" display="property" visibleon="Kirchhoff-Love Model">
+						<attributes options="Generalized Strain,Generalized Stress"/>
+						<property name="epsilon11" caption="epsilon11" control="float" default="0." visibleon="Generalized Strain" />
+						<property name="epsilon22" caption="epsilon22" control="float" default="0." visibleon="Generalized Strain" />
+						<property name="2epsilon12" caption="2epsilon12" control="float" default="0." visibleon="Generalized Strain" />
+						<property name="kappa11" caption="kappa11" control="float" default="0." visibleon="Generalized Strain" />
+						<property name="kappa22" caption="kappa22" control="float" default="0." visibleon="Generalized Strain" />
+						<property name="2kappa12" caption="2kappa12" control="float" default="0." visibleon="Generalized Strain" />
+						<property name="N11" caption="N11" control="float" default="0." visibleon="Generalized Stress" />
+						<property name="N22" caption="N22" control="float" default="0." visibleon="Generalized Stress" />
+						<property name="N12" caption="N12" control="float" default="0." visibleon="Generalized Stress" />
+						<property name="M11" caption="M11" control="float" default="0." visibleon="Generalized Stress" />
+						<property name="M22" caption="M22" control="float" default="0." visibleon="Generalized Stress" />
+						<property name="M12" caption="M12" control="float" default="0." visibleon="Generalized Stress" />
+					</propertygroup>
+					<propertygroup name="Method2" caption="Method" control="select" default="Generalized Strain" display="property" visibleon="Reissner-Mindlin Model">
+						<attributes options="Generalized Strain,Generalized Stress"/>
+						<property name="epsilon11" caption="epsilon11" control="float" default="0." visibleon="Generalized Strain" />
+						<property name="epsilon22" caption="epsilon22" control="float" default="0." visibleon="Generalized Strain" />
+						<property name="2epsilon12" caption="2epsilon12" control="float" default="0." visibleon="Generalized Strain" />
+						<property name="kappa11" caption="kappa11" control="float" default="0." visibleon="Generalized Strain" />
+						<property name="kappa22" caption="kappa22" control="float" default="0." visibleon="Generalized Strain" />
+						<property name="2kappa12" caption="2kappa12" control="float" default="0." visibleon="Generalized Strain" />
+						<property name="gamma13" caption="gamma13" control="float" default="0." visibleon="Generalized Strain" />
+						<property name="gamma23" caption="gamma23" control="float" default="0." visibleon="Generalized Strain" />
+						<property name="N11" caption="N11" control="float" default="0." visibleon="Generalized Stress" />
+						<property name="N22" caption="N22" control="float" default="0." visibleon="Generalized Stress" />
+						<property name="N12" caption="N12" control="float" default="0." visibleon="Generalized Stress" />
+						<property name="M11" caption="M11" control="float" default="0." visibleon="Generalized Stress" />
+						<property name="M22" caption="M22" control="float" default="0." visibleon="Generalized Stress" />
+						<property name="M12" caption="M12" control="float" default="0." visibleon="Generalized Stress" />
+						<property name="N13" caption="N13" control="float" default="0." visibleon="Generalized Stress" />
+						<property name="N23" caption="N23" control="float" default="0." visibleon="Generalized Stress" />
+					</propertygroup>
+				</propertygroup>
+			</propertygroup>
+			
+        </load>
+
+        <load name="solidDehomogenization" version="1" caption="Solid Model Dehomogenization Setting" icon="solidModelDehomAtTree" issupport="false" isload="true">
+            <callbacks>
+                <canadd>solidDehomogenizationCanAddAtTree</canadd>
+                <ongenerate>solidDehomogenizationAtTree</ongenerate>
+            </callbacks>
+            <propertygroup name="Information Source" caption="Information Source">
+                <propertygroup name="Select" caption="Select" control="select" default="User Input" display="property">
+                    <attributes options="User Input,From Structural Analysis" />
+					<property name="Extraction Name" caption="Extraction Name" control="select" default="" visibleon="From Structural Analysis" >
+						<callbacks>
+							<onactivate>extractionNameSolidModelOnActivate</onactivate>
+						</callbacks>
+					</property>
+                </propertygroup>		
+            </propertygroup>
+            <propertygroup name="Macro Displacements" caption="Macro Displacements" default="">
+                <property name="v1" caption="v1" control="float" default="0." />
+                <property name="v2" caption="v2" control="float" default="0." />
+                <property name="v3" caption="v3" control="float" default="0." />
+            </propertygroup>
+            <propertygroup name="Macro Rotations" caption="Macro Rotations" default="">
+                <property name="C11" caption="C11" control="float" default="1." />
+                <property name="C12" caption="C12" control="float" default="0." />
+                <property name="C13" caption="C13" control="float" default="0." />
+                <property name="C21" caption="C21" control="float" default="0." />
+                <property name="C22" caption="C22" control="float" default="1." />
+                <property name="C23" caption="C23" control="float" default="0." />
+                <property name="C31" caption="C31" control="float" default="0." />
+                <property name="C32" caption="C32" control="float" default="0." />
+                <property name="C33" caption="C33" control="float" default="1." />
+            </propertygroup>
+			<propertygroup name="Macro Generalized StrainStress" caption="Macro Generalized Strains/Stresses" display="caption" control="text">
+				<propertygroup name="Method" caption="Method" control="select" default="Generalized Strain" display="property">
+					<attributes options="Generalized Strain,Generalized Stress"/>
+					<property name="epsilon11" caption="epsilon11" control="float" default="0." visibleon="Generalized Strain" />
+					<property name="epsilon22" caption="epsilon22" control="float" default="0." visibleon="Generalized Strain" />
+					<property name="epsilon33" caption="epsilon33" control="float" default="0." visibleon="Generalized Strain" />
+					<property name="2epsilon23" caption="2epsilon23" control="float" default="0." visibleon="Generalized Strain" />
+					<property name="2epsilon13" caption="2epsilon13" control="float" default="0." visibleon="Generalized Strain" />
+					<property name="2epsilon12" caption="2epsilon12" control="float" default="0." visibleon="Generalized Strain" />
+					<property name="sigma11" caption="sigma11" control="float" default="0." visibleon="Generalized Stress" />
+					<property name="sigma22" caption="sigma22" control="float" default="0." visibleon="Generalized Stress" />
+					<property name="sigma33" caption="sigma33" control="float" default="0." visibleon="Generalized Stress" />
+					<property name="sigma23" caption="sigma23" control="float" default="0." visibleon="Generalized Stress" />
+					<property name="sigma13" caption="sigma13" control="float" default="0." visibleon="Generalized Stress" />
+					<property name="sigma12" caption="sigma12" control="float" default="0." visibleon="Generalized Stress" />
+				</propertygroup>
+			</propertygroup>
+        </load>
+
+		<!--Failure Analysis" /> -->
+		
+		<load name="failureStregnth" version="1" caption="Failure Strength Analysis" icon="failureStregnthAtTree" issupport="false" isload="true">
+			<callbacks>
+                <canadd>failureStregnthCanAddAtTree</canadd>
+                <ongenerate>failureStregnthOnGenerateAtTree</ongenerate>
+            </callbacks>
+			
+			<propertygroup name="Strength Parameters" caption="Strength Parameters">
+				<propertytable name="Failure Criterion" caption="Failure Criterion" display="worksheet" control="applycancel" class="FCTabularData">
+					<property name="Material Name" caption="Material Name" control="text" />
+					<propertygroup name="Material Type" caption="Material Type" control="text" readonly="True" default="Isotropic" display="property">
+						<propertygroup name="FC (isotropic)" caption="FC" control="select" default="Max Principal Stress" visibleon="Isotropic" display="property">
+							<attributes options="Max Principal Stress,Max Principal Strain,Max Shear Stress,Max Shear Strain,Mises Criterion" />
+							<property name="X_t" caption="X_t" control="float" visibleon="Max Principal Stress|Mises Criterion"/>
+							<property name="X_c" caption="X_c" control="float" visibleon="Max Principal Stress"/>
+							<property name="Xe_t" caption="Xe_t" control="float" visibleon="Max Principal Strain"/>
+							<property name="Xe_c" caption="Xe_c" control="float" visibleon="Max Principal Strain"/>
+							<property name="S" caption="S" control="float" visibleon="Max Shear Stress"/>
+							<property name="Se" caption="Se" control="float" visibleon="Max Shear Strain"/>
+						</propertygroup>
+						<propertygroup name="FC (not isotropic)" caption="FC" control="select" default="Max Stress" visibleon="Orthotropic|Anisotropic" display="property">
+							<attributes options="Max Stress,Max Strain,Tsai-Hill,Tsai-Wu,Hashin" />
+							<property name="X_t" caption="X_t" control="float" visibleon="Max Stress|Tsai-Hill|Tsai-Wu|Hashin"/>
+							<property name="Y_t" caption="Y_t" control="float" visibleon="Max Stress|Tsai-Hill|Tsai-Wu|Hashin"/>
+							<property name="Z_t" caption="Z_t" control="float" visibleon="Max Stress|Tsai-Hill|Tsai-Wu"/>
+							<property name="X_c" caption="X_c" control="float" visibleon="Max Stress|Tsai-Wu|Hashin"/>
+							<property name="Y_c" caption="Y_c" control="float" visibleon="Max Stress|Tsai-Wu|Hashin"/>
+							<property name="Z_c" caption="Z_c" control="float" visibleon="Max Stress|Tsai-Wu"/>
+							<property name="R" caption="R" control="float" visibleon="Max Stress|Tsai-Hill|Tsai-Wu|Hashin"/>
+							<property name="T" caption="T" control="float" visibleon="Max Stress|Tsai-Hill|Tsai-Wu|Hashin"/>
+							<property name="S" caption="S" control="float" visibleon="Max Stress|Tsai-Hill|Tsai-Wu"/>
+							<property name="Xe_t" caption="Xe_t" control="float" visibleon="Max Strain"/>
+							<property name="Ye_t" caption="Ye_t" control="float" visibleon="Max Strain"/>
+							<property name="Ze_t" caption="Ze_t" control="float" visibleon="Max Strain"/>
+							<property name="Xe_c" caption="Xe_c" control="float" visibleon="Max Strain"/>
+							<property name="Ye_c" caption="Ye_c" control="float" visibleon="Max Strain"/>
+							<property name="Ze_c" caption="Ze_c" control="float" visibleon="Max Strain"/>
+							<property name="Re" caption="Re" control="float" visibleon="Max Strain"/>
+							<property name="Te" caption="Te" control="float" visibleon="Max Strain"/>
+							<property name="Se" caption="Se" control="float" visibleon="Max Strain"/>
+						</propertygroup>
+					</propertygroup>
+				</propertytable>
+				<property name="Characteristic Length" caption="Characteristic Length" control="float" default="0.0" />
+			</propertygroup>	
+			<propertygroup name="Additional Information" caption="Additional Information">
+				<property name="Generalized StressStrain" caption="Generalized Stress/Strain" control="select" default="Stress">
+					<attributes options="Stress,Strain" />
+				</property>
+			</propertygroup>
+		</load> 
+		
+		<load name="failureEnvelope" version="1" caption="Failure Envelope Analysis" icon="failureEnvelopeAtTree" issupport="false" isload="true">
+			<callbacks>
+                <canadd>failureEnvelopeCanAddAtTree</canadd>
+                <ongenerate>failureEnvelopeOnGenerateAtTree</ongenerate>
+            </callbacks>
+			<propertygroup name="Strength Parameters" caption="Strength Parameters">
+				<propertytable name="Failure Criterion" caption="Failure Criterion" display="worksheet" control="applycancel" class="FCTabularData">
+					<property name="Material Name" caption="Material Name" control="text" />
+					<propertygroup name="Material Type" caption="Material Type" control="text" readonly="True" default="Isotropic" display="property">
+						<propertygroup name="FC (isotropic)" caption="FC" control="select" default="Max Principal Stress" visibleon="Isotropic" display="property">
+							<attributes options="Max Principal Stress,Max Principal Strain,Max Shear Stress,Max Shear Strain,Mises Criterion" />
+							<property name="X_t" caption="X_t" control="float" visibleon="Max Principal Stress|Mises Criterion"/>
+							<property name="X_c" caption="X_c" control="float" visibleon="Max Principal Stress"/>
+							<property name="Xe_t" caption="Xe_t" control="float" visibleon="Max Principal Strain"/>
+							<property name="Xe_c" caption="Xe_c" control="float" visibleon="Max Principal Strain"/>
+							<property name="S" caption="S" control="float" visibleon="Max Shear Stress"/>
+							<property name="Se" caption="Se" control="float" visibleon="Max Shear Strain"/>
+						</propertygroup>
+						<propertygroup name="FC (not isotropic)" caption="FC" control="select" default="Max Stress" visibleon="Orthotropic|Anisotropic" display="property">
+							<attributes options="Max Stress,Max Strain,Tsai-Hill,Tsai-Wu,Hashin" />
+							<property name="X_t" caption="X_t" control="float" visibleon="Max Stress|Tsai-Hill|Tsai-Wu|Hashin"/>
+							<property name="Y_t" caption="Y_t" control="float" visibleon="Max Stress|Tsai-Hill|Tsai-Wu|Hashin"/>
+							<property name="Z_t" caption="Z_t" control="float" visibleon="Max Stress|Tsai-Hill|Tsai-Wu"/>
+							<property name="X_c" caption="X_c" control="float" visibleon="Max Stress|Tsai-Wu|Hashin"/>
+							<property name="Y_c" caption="Y_c" control="float" visibleon="Max Stress|Tsai-Wu|Hashin"/>
+							<property name="Z_c" caption="Z_c" control="float" visibleon="Max Stress|Tsai-Wu"/>
+							<property name="R" caption="R" control="float" visibleon="Max Stress|Tsai-Hill|Tsai-Wu|Hashin"/>
+							<property name="T" caption="T" control="float" visibleon="Max Stress|Tsai-Hill|Tsai-Wu|Hashin"/>
+							<property name="S" caption="S" control="float" visibleon="Max Stress|Tsai-Hill|Tsai-Wu"/>
+							<property name="Xe_t" caption="Xe_t" control="float" visibleon="Max Strain"/>
+							<property name="Ye_t" caption="Ye_t" control="float" visibleon="Max Strain"/>
+							<property name="Ze_t" caption="Ze_t" control="float" visibleon="Max Strain"/>
+							<property name="Xe_c" caption="Xe_c" control="float" visibleon="Max Strain"/>
+							<property name="Ye_c" caption="Ye_c" control="float" visibleon="Max Strain"/>
+							<property name="Ze_c" caption="Ze_c" control="float" visibleon="Max Strain"/>
+							<property name="Re" caption="Re" control="float" visibleon="Max Strain"/>
+							<property name="Te" caption="Te" control="float" visibleon="Max Strain"/>
+							<property name="Se" caption="Se" control="float" visibleon="Max Strain"/>
+						</propertygroup>
+					</propertygroup>
+				</propertytable>
+				<property name="Characteristic Length" caption="Characteristic Length" control="float" default="0.0" />
+			</propertygroup>
+			
+			<propertygroup name="Additional Information" caption="Additional Information">
+				<propertygroup name="Generalized StressStrain" caption="Generalized Stress/Strain" control="select" default="Stress" display="property">
+					<attributes options="Stress,Strain" />
+					<property name="Failure Envelope x Axis Component (Stress)" caption="Failure Envelope x Axis Component (Stress)" control="select" visibleon="Stress" default="sigma11">
+						<attributes options="sigma11,sigma22,sigma33,sigma23,sigma13,sigma12" />
+					</property>
+					<property name="Failure Envelope x Axis Component (Strain)" caption="Failure Envelope x Axis Component (Strain)" control="select" visibleon="Strain" default="epsilon11">
+						<attributes options="epsilon11,epsilon22,epsilon33,epsilon23,epsilon13,epsilon12" />
+					</property>
+					<property name="Failure Envelope y Axis Component (Stress)" caption="Failure Envelope y Axis Component (Stress)" control="select" visibleon="Stress" default="sigma22">
+						<attributes options="sigma11,sigma22,sigma33,sigma23,sigma13,sigma12" />
+					</property>
+					<property name="Failure Envelope y Axis Component (Strain)" caption="Failure Envelope y Axis Component (Strain)" control="select" visibleon="Strain" default="epsilon22">
+						<attributes options="epsilon11,epsilon22,epsilon33,epsilon23,epsilon13,epsilon12" />
+					</property>
+				</propertygroup>
+				<property name="Number of divisions along one direction" caption="Number of divisions along one direction" control="float" default="10" />
+			</propertygroup>
+		</load> 
+		
+		<load name="failureIndex" version="1" caption="Failure Index Analysis" icon="failureIndexAtTree" issupport="false" isload="true">
+			<callbacks>
+                <canadd>failureIndexCanAddAtTree</canadd>
+                <ongenerate>failureIndexOnGenerateAtTree</ongenerate>
+            </callbacks>
+			<propertygroup name="Strength Parameters" caption="Strength Parameters">
+				<propertytable name="Failure Criterion" caption="Failure Criterion" display="worksheet" control="applycancel" class="FCTabularData">
+					<property name="Material Name" caption="Material Name" control="text" />
+					<propertygroup name="Material Type" caption="Material Type" control="text" readonly="True" default="Isotropic" display="property">
+						<propertygroup name="FC (isotropic)" caption="FC" control="select" default="Max Principal Stress" visibleon="Isotropic" display="property">
+							<attributes options="Max Principal Stress,Max Principal Strain,Max Shear Stress,Max Shear Strain,Mises Criterion" />
+							<property name="X_t" caption="X_t" control="float" visibleon="Max Principal Stress|Mises Criterion"/>
+							<property name="X_c" caption="X_c" control="float" visibleon="Max Principal Stress"/>
+							<property name="Xe_t" caption="Xe_t" control="float" visibleon="Max Principal Strain"/>
+							<property name="Xe_c" caption="Xe_c" control="float" visibleon="Max Principal Strain"/>
+							<property name="S" caption="S" control="float" visibleon="Max Shear Stress"/>
+							<property name="Se" caption="Se" control="float" visibleon="Max Shear Strain"/>
+						</propertygroup>
+						<propertygroup name="FC (not isotropic)" caption="FC" control="select" default="Max Stress" visibleon="Orthotropic|Anisotropic" display="property">
+							<attributes options="Max Stress,Max Strain,Tsai-Hill,Tsai-Wu,Hashin" />
+							<property name="X_t" caption="X_t" control="float" visibleon="Max Stress|Tsai-Hill|Tsai-Wu|Hashin"/>
+							<property name="Y_t" caption="Y_t" control="float" visibleon="Max Stress|Tsai-Hill|Tsai-Wu|Hashin"/>
+							<property name="Z_t" caption="Z_t" control="float" visibleon="Max Stress|Tsai-Hill|Tsai-Wu"/>
+							<property name="X_c" caption="X_c" control="float" visibleon="Max Stress|Tsai-Wu|Hashin"/>
+							<property name="Y_c" caption="Y_c" control="float" visibleon="Max Stress|Tsai-Wu|Hashin"/>
+							<property name="Z_c" caption="Z_c" control="float" visibleon="Max Stress|Tsai-Wu"/>
+							<property name="R" caption="R" control="float" visibleon="Max Stress|Tsai-Hill|Tsai-Wu|Hashin"/>
+							<property name="T" caption="T" control="float" visibleon="Max Stress|Tsai-Hill|Tsai-Wu|Hashin"/>
+							<property name="S" caption="S" control="float" visibleon="Max Stress|Tsai-Hill|Tsai-Wu"/>
+							<property name="Xe_t" caption="Xe_t" control="float" visibleon="Max Strain"/>
+							<property name="Ye_t" caption="Ye_t" control="float" visibleon="Max Strain"/>
+							<property name="Ze_t" caption="Ze_t" control="float" visibleon="Max Strain"/>
+							<property name="Xe_c" caption="Xe_c" control="float" visibleon="Max Strain"/>
+							<property name="Ye_c" caption="Ye_c" control="float" visibleon="Max Strain"/>
+							<property name="Ze_c" caption="Ze_c" control="float" visibleon="Max Strain"/>
+							<property name="Re" caption="Re" control="float" visibleon="Max Strain"/>
+							<property name="Te" caption="Te" control="float" visibleon="Max Strain"/>
+							<property name="Se" caption="Se" control="float" visibleon="Max Strain"/>
+						</propertygroup>
+					</propertygroup>
+				</propertytable>
+				<property name="Characteristic Length" caption="Characteristic Length" control="float" default="0.0" />
+			</propertygroup>
+			
+			<propertygroup name="Additional Information" caption="Additional Information">
+				<propertygroup name="Generalized StressStrain" caption="Generalized Stress/Strain" control="select" default="Stress" display="property">
+					<attributes options="Stress,Strain" />
+					<callbacks>
+						<onactivate>failureIndexGeneralizedStressStrainOnActivate</onactivate>
+					</callbacks>
+					<propertygroup name="Euler-Bernoulli Beam Stress" caption="Euler-Bernoulli Beam Stress" visibleon="Stress" display="caption" control="text" default="">
+					    <callbacks>
+							<isvisible>EulerBernoulliBeamStressVisible</isvisible>
+						</callbacks>
+						<property name="F1" caption="F1" control="float" />
+						<property name="M1" caption="M1" control="float" />
+						<property name="M2" caption="M2" control="float" />
+						<property name="M3" caption="M3" control="float" />
+					</propertygroup>
+					
+					<propertygroup name="Euler-Bernoulli Beam Strain" caption="Euler-Bernoulli Beam Strain" visibleon="Strain" display="caption" control="text" default="">
+					    <callbacks>
+							<isvisible>EulerBernoulliBeamStrainVisible</isvisible>
+						</callbacks>
+						<property name="epsilon11" caption="epsilon11" control="float" />
+						<property name="kappa11" caption="kappa11" control="float" />
+						<property name="kappa12" caption="kappa12" control="float" />
+						<property name="kappa13" caption="kappa13" control="float" />
+					</propertygroup>
+						
+					<propertygroup name="Timoshenko Beam Stress" caption="Timoshenko Beam Stress" visibleon="Stress" display="caption" control="text" default="">
+					    <callbacks>
+							<isvisible>TimoshenkoBeamStressVisible</isvisible>
+						</callbacks>
+						<property name="F1" caption="F1" control="float" />
+						<property name="F2" caption="F2" control="float" />
+						<property name="F3" caption="F3" control="float" />
+						<property name="M1" caption="M1" control="float" />
+						<property name="M2" caption="M2" control="float" />
+						<property name="M3" caption="M3" control="float" />
+					</propertygroup>
+						
+					<propertygroup name="Timoshenko Beam Strain" caption="Timoshenko Beam Strain" visibleon="Strain" display="caption" control="text" default="">
+					    <callbacks>
+							<isvisible>TimoshenkoBeamStrainVisible</isvisible>
+						</callbacks>
+						<property name="epsilon11" caption="epsilon11" control="float" />
+						<property name="gamma12" caption="gamma12" control="float" />
+						<property name="gamma13" caption="gamma13" control="float" />
+						<property name="kappa11" caption="kappa11" control="float" />
+						<property name="kappa12" caption="kappa12" control="float" />
+						<property name="kappa13" caption="kappa13" control="float" />
+					</propertygroup>
+					
+					<propertygroup name="Kirchhoff-Love Plate Stress" caption="Kirchhoff-Love Plate Stress" visibleon="Stress" display="caption" control="text" default="">
+					    <callbacks>
+							<isvisible>KirchhoffLovePlateStressVisible</isvisible>
+						</callbacks>
+						<property name="N11" caption="N11" control="float" />
+						<property name="N22" caption="N22" control="float" />
+						<property name="N12" caption="N12" control="float" />
+						<property name="M11" caption="M11" control="float" />
+						<property name="M22" caption="M22" control="float" />
+						<property name="M12" caption="M12" control="float" />
+					</propertygroup>
+						
+					<propertygroup name="Kirchhoff-Love Plate Strain" caption="Kirchhoff-Love Plate Strain" visibleon="Strain" display="caption" control="text" default="">
+					    <callbacks>
+							<isvisible>KirchhoffLovePlateStrainVisible</isvisible>
+						</callbacks>
+						<property name="epsilon11" caption="epsilon11" control="float" />
+						<property name="epsilon22" caption="epsilon22" control="float" />
+						<property name="2epsilon12" caption="2epsilon12" control="float" />
+						<property name="kappa11" caption="kappa11" control="float" />
+						<property name="kappa22" caption="kappa22" control="float" />
+						<property name="2kappa12" caption="2kappa12" control="float" />
+					</propertygroup>
+					
+					<propertygroup name="Reissner-Mindlin Plate Stress" caption="Reissner-Mindlin Plate Stress" visibleon="Stress" display="caption" control="text" default="">
+					    <callbacks>
+							<isvisible>ReissnerMindlinPlateStressVisible</isvisible>
+						</callbacks>
+						<property name="N11" caption="N11" control="float" />
+						<property name="N22" caption="N22" control="float" />
+						<property name="N12" caption="N12" control="float" />
+						<property name="M11" caption="M11" control="float" />
+						<property name="M22" caption="M22" control="float" />
+						<property name="M12" caption="M12" control="float" />
+						<property name="N13" caption="N13" control="float" />
+						<property name="N23" caption="N23" control="float" />
+					</propertygroup>
+					
+					<propertygroup name="Reissner-Mindlin Plate Strain" caption="Reissner-Mindlin Plate Strain" visibleon="Strain" display="caption" control="text" default="">
+					    <callbacks>
+							<isvisible>ReissnerMindlinPlateStrainVisible</isvisible>
+						</callbacks>
+						<property name="epsilon11" caption="epsilon11" control="float" />
+						<property name="epsilon22" caption="epsilon22" control="float" />
+						<property name="2epsilon12" caption="2epsilon12" control="float" />
+						<property name="kappa11" caption="kappa11" control="float" />
+						<property name="kappa22" caption="kappa22" control="float" />
+						<property name="2kappa12" caption="2kappa12" control="float" />
+						<property name="gamma13" caption="gamma13" control="float" />
+						<property name="gamma23" caption="gamma23" control="float" />
+					</propertygroup>
+
+					<propertygroup name="Solid Stress" caption="Solid Stress" visibleon="Stress" display="caption" control="text" default="">
+					    <callbacks>
+							<isvisible>solidStressVisible</isvisible>
+						</callbacks>
+						<property name="sigma11" caption="sigma11" control="float" />
+						<property name="sigma22" caption="sigma22" control="float" />
+						<property name="sigma33" caption="sigma33" control="float" />
+						<property name="sigma23" caption="sigma23" control="float" />
+						<property name="sigma13" caption="sigma13" control="float" />
+						<property name="sigma12" caption="sigma12" control="float" />
+					</propertygroup>
+					<propertygroup name="Solid Strain" caption="Solid Strain" visibleon="Strain" display="caption" control="text" default="">
+					    <callbacks>
+							<isvisible>solidStrainVisible</isvisible>
+						</callbacks>
+						<property name="epsilon11" caption="epsilon11" control="float" />
+						<property name="epsilon22" caption="epsilon22" control="float" />
+						<property name="epsilon33" caption="epsilon33" control="float" />
+						<property name="epsilon23" caption="epsilon23" control="float" />
+						<property name="epsilon13" caption="epsilon13" control="float" />
+						<property name="epsilon12" caption="epsilon12" control="float" />
+					</propertygroup>
+				</propertygroup>
+			</propertygroup>
+		</load> 
+
+    </simdata>
+
+
+</extension>

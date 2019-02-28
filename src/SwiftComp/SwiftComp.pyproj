@@ -1,0 +1,72 @@
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>5dd6ac7e-b0f5-4e98-8a4d-2e1cee03ad35</ProjectGuid>
+    <ProjectHome>.</ProjectHome>
+    <StartupFile>
+    </StartupFile>
+    <SearchPath>
+    </SearchPath>
+    <WorkingDirectory>.</WorkingDirectory>
+    <InterpreterId>IronPython|2.7-32</InterpreterId>
+    <LaunchProvider>IronPython (.NET) launcher</LaunchProvider>
+    <OutputPath>.</OutputPath>
+    <Name>SwiftComp</Name>
+    <RootNamespace>SwiftComp</RootNamespace>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <DebugSymbols>true</DebugSymbols>
+    <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <DebugSymbols>true</DebugSymbols>
+    <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
+  </PropertyGroup>
+  <ItemGroup>
+    <InterpreterReference Include="IronPython|2.7-32" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="dehom_func.py" />
+    <Compile Include="failure_func.py" />
+    <Compile Include="failure.py" />
+    <Compile Include="hom_func.py" />
+    <Compile Include="sg_element.py" />
+    <Compile Include="sg_filesystem.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="dehom.py" />
+    <Compile Include="errorcheck.py" />
+    <Compile Include="geometry.py" />
+    <Compile Include="help.py" />
+    <Compile Include="hom.py" />
+    <Compile Include="ansys_materials.py" />
+    <Compile Include="sg_homogenization_result_list.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="sg_material.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="sg_layer.py" />
+    <Compile Include="sg_node.py" />
+    <Compile Include="sg_result.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="sg_structural_result_list.py" />
+    <Compile Include="structural.py" />
+    <Compile Include="structural_func.py" />
+    <Compile Include="sg.py" />
+    <Compile Include="utilities.py" />
+    <Compile Include="visual.py" />
+    <Compile Include="__init__.py" />
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
+  <!-- Uncomment the CoreCompile target to enable the Build command in
+       Visual Studio and specify your pre- and post-build commands in
+       the BeforeBuild and AfterBuild targets below. -->
+  <!--<Target Name="CoreCompile" />-->
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+</Project>
