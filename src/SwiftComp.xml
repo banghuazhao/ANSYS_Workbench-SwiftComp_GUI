@@ -1,4 +1,4 @@
-<extension version="1" name="SwiftComp">
+<extension version="1" minorversion="1" name="SwiftComp">
     <guid shortid="SwiftComp">F4006F90-3B5B-4515-9DC9-D15FE80833BA</guid>
     <author>Banghua Zhao, Hamsasew Sertse, Xin Liu, Su Tian, Wenbin Yu</author>
     <script src="geometry.py" />
@@ -6,7 +6,7 @@
     <script src="structural.py" />
     <script src="dehom.py" />
     <script src="help.py" />
-    <script src="failure.py" />	
+    <script src="failure.py" />
 	<script src="FailureCriTabularData.py" />
 
     <interface context="Project|Mechanical">
@@ -14,31 +14,31 @@
 		<toolbar name="SwiftComp" caption="SwiftComp">
 		</toolbar>
     </interface>
-	
+
     <simdata context="Project|Mechanical">
-	
+
         <solver name="SwiftCompHom" version="1" caption="SwiftComp Homogenization" icon="SCHom" analysis="Static" physics="Structural">
             <callbacks>
                 <onsolve>SwiftCompHom</onsolve>
             </callbacks>
         </solver>
-		
+
         <solver name="SwiftCompDehom" version="1" caption="SwiftComp Dehomogenization" icon="SCDehom" analysis="Static" physics="Structural">
             <callbacks>
                 <onsolve>SwiftCompDehom</onsolve>
                 <getreader>GetReader</getreader>
             </callbacks>
         </solver>
-		
+
 		<solver name="SwiftCompFailure" version="1" caption="SwiftComp Failure Analysis" icon="SCFail" analysis="Static" physics="Structural">
             <callbacks>
                 <onsolve>SwiftCompFailure</onsolve>
             </callbacks>
         </solver>
-		
+
     </simdata>
-	
-	
+
+
     <!-- spaceclaim -->
     <!-- <interface context="spaceClaim"> -->
         <!-- <Images>images</images> -->
@@ -51,12 +51,12 @@
         <!-- </Toolbar> -->
     <!-- </Interface> -->
     <!-- spaceclaim -->
-	
-	
+
+
     <interface context="DesignModeler">
         <images>images</images>
         <toolbar name="SwiftComp" caption="SwiftComp">
-		
+
             <entry name="Common1DSG" icon="common1DSGAtToolbar" caption="Common 1D SG">
                 <entry name="dummyPlate" icon="plateModelHomAtToolbar" caption="Dummy Plate (for ACP)">
                     <callbacks>
@@ -64,7 +64,7 @@
                     </callbacks>
                 </entry>
             </entry>
-			
+
             <entry name="Common2DSG" icon="square2DAtToolbar" caption="Common 2D SG">
                 <entry name="square2D" icon="square2DAtToolbar" caption="Square Pack Microstructure 2D">
                     <callbacks>
@@ -72,7 +72,7 @@
                     </callbacks>
                 </entry>
             </entry>
-			
+
             <entry name="Common3DSG" icon="sphericalAtToolbar" caption="Common 3D SG">
                 <entry name="spherical" icon="sphericalAtToolbar" caption="Spherical Inclusion Microstructure">
                     <callbacks>
@@ -80,19 +80,19 @@
                     </callbacks>
                 </entry>
             </entry>
-			
+
             <entry name="Help" caption="Help" icon="helpAtToolbar">
                 <callbacks>
                     <onclick>helpAtToolbar</onclick>
                 </callbacks>
             </entry>
-			
+
         </toolbar>
     </interface>
 
 
     <simdata context="DesignModeler">
-	
+
         <geometry name="dummyPlate" icon="plateModelHomAtToolbar" caption="Dummy Plate" version="1">
             <callbacks>
                 <ongenerate>dummyPlateAtTree</ongenerate>
@@ -106,7 +106,7 @@
                 </property>
             </propertygroup>
         </geometry>
-		
+
         <geometry name="square2D" icon="square2DAtTree" caption="Square Pack Microstructure 2D" version="1">
             <callbacks>
                 <ongenerate>square2DAtTree</ongenerate>
@@ -128,7 +128,7 @@
                 </property>
             </propertygroup>
         </geometry>
-		
+
         <geometry name="spherical" icon="sphericalAtTree" caption="Spherical Inclusion Microstructure" version="1">
             <callbacks>
                 <ongenerate>sphericalAtTree</ongenerate>
@@ -150,7 +150,7 @@
                 </property>
             </propertygroup>
         </geometry>
-		
+
     </simdata>
 
 
@@ -206,8 +206,8 @@
 
             <propertygroup name="Homogenization Result Name" caption="Homogenization Result Name">
                 <property name="Name" caption="Name" control="text" default="" />
-            </propertygroup>		
-			
+            </propertygroup>
+
             <propertygroup name="Submodel" caption="Submodel">
                 <property name="Type of Beam Model" caption="Type of Beam Model" control="select" default="Euler-Bernoulli Beam Model">
                     <attributes options="Euler-Bernoulli Beam Model,Timoshenko Beam Model" />
@@ -268,10 +268,10 @@
                 <ongenerate>plateHomogenizationAtTree</ongenerate>
 				<OnRemove>HomogenizationSettingOnRemovetAtTree</OnRemove>
             </callbacks>
-			
+
             <propertygroup name="Homogenization Result Name" caption="Homogenization Result Name">
                 <property name="Name" caption="Name" control="text" default="" />
-            </propertygroup>	
+            </propertygroup>
 
             <propertygroup name="Submodel" caption="Submodel">
                 <property name="Type of Plate Model" caption="Type of Plate/Shell Model" control="select" default="Kirchhoff-Love Model">
@@ -324,7 +324,7 @@
         </load>
 
         <load name="solidHomogenization" version="1" caption="Solid Model Homogenization Setting" icon="solidModelHomAtTree" issupport="false" isload="true">
-		
+
             <callbacks>
                 <canadd>solidHomogenizationCanAddAtTree</canadd>
 				<oninit>solidHomogenizationOnInitAtTree</oninit>
@@ -334,8 +334,8 @@
 
             <propertygroup name="Homogenization Result Name" caption="Homogenization Result Name">
                 <property name="Name" caption="Name" control="text" default="" />
-            </propertygroup>	
-			
+            </propertygroup>
+
             <propertygroup name="Problem Control Parameters" caption="Problem Control Parameters" display="caption">
 
                 <propertygroup name="Analysis Type" caption="Analysis Type" control="select" default="Elastic" display="property">
@@ -622,12 +622,12 @@
                 </callbacks>
 				<property name="Effective Density" caption="Effective Density" control="float" readonly="True" isparameter="True"/>
             </propertygroup>
-			                
+
 
         </object>
 
         <!-- Structural Analysis Toolbar -->
-		
+
         <object name="importHomogenizationResult" version="1" caption="Import Homogenization Result" icon="importHomogenizationResultAtTree">
 			<target type="datamodel" />
             <callbacks>
@@ -646,7 +646,7 @@
 							<onactivate>importHomogenizationResultInformationSourceOnActivate</onactivate>
 						</callbacks>
 					</property>
-                </propertygroup>		
+                </propertygroup>
             </propertygroup>
             <propertygroup name="Model Information" caption="Model Information">
                 <property name="Macro Model" caption="Macro Model" control="text" default="" readonly="True"/>
@@ -733,7 +733,7 @@
 				<property name="Effective Density" caption="Effective Density" control="float" />
             </propertygroup>
 		</object>
-			
+
         <object name="extractResult" version="1" caption="Extract Result" icon="extractResultAtTree">
 			<target type="analysis" location="post" />
             <callbacks>
@@ -744,13 +744,13 @@
                 <ongenerate>extractResultOnGenerateAtTree</ongenerate>
 				<OnRemove>extractResulOnRemovetAtTree</OnRemove>
             </callbacks>
-			
+
             <propertygroup name="Dehomogenization Information" caption="Dehomogenization Information">
                 <property name="Dehomogenization at the same time" caption="Dehomogenization at the same time?" control="select" default="No">
                     <attributes options="Yes,No"/>
                 </property>
             </propertygroup>
-			
+
             <propertygroup name="Element Selection" caption="Element Selection">
                 <property name="Select Element(s)" caption="Select Element(s)" control="geometry_selection">
                     <attributes selection_filter="element"/>
@@ -921,7 +921,7 @@
 					</propertygroup>
 				</propertygroup>
 			</propertygroup>
-			
+
         </load>
 
         <load name="plateDehomogenization" version="1" caption="Plate/Shell Model Dehomogenization Setting" icon="plateModelDehomAtTree" issupport="false" isload="true">
@@ -996,7 +996,7 @@
 					</propertygroup>
 				</propertygroup>
 			</propertygroup>
-			
+
         </load>
 
         <load name="solidDehomogenization" version="1" caption="Solid Model Dehomogenization Setting" icon="solidModelDehomAtTree" issupport="false" isload="true">
@@ -1012,7 +1012,7 @@
 							<onactivate>extractionNameSolidModelOnActivate</onactivate>
 						</callbacks>
 					</property>
-                </propertygroup>		
+                </propertygroup>
             </propertygroup>
             <propertygroup name="Macro Displacements" caption="Macro Displacements" default="">
                 <property name="v1" caption="v1" control="float" default="0." />
@@ -1050,13 +1050,13 @@
         </load>
 
 		<!--Failure Analysis" /> -->
-		
+
 		<load name="failureStregnth" version="1" caption="Failure Strength Analysis" icon="failureStregnthAtTree" issupport="false" isload="true">
 			<callbacks>
                 <canadd>failureStregnthCanAddAtTree</canadd>
                 <ongenerate>failureStregnthOnGenerateAtTree</ongenerate>
             </callbacks>
-			
+
 			<propertygroup name="Strength Parameters" caption="Strength Parameters">
 				<propertytable name="Failure Criterion" caption="Failure Criterion" display="worksheet" control="applycancel" class="FCTabularData">
 					<property name="Material Name" caption="Material Name" control="text" />
@@ -1094,14 +1094,14 @@
 					</propertygroup>
 				</propertytable>
 				<property name="Characteristic Length" caption="Characteristic Length" control="float" default="0.0" />
-			</propertygroup>	
+			</propertygroup>
 			<propertygroup name="Additional Information" caption="Additional Information">
 				<property name="Generalized StressStrain" caption="Generalized Stress/Strain" control="select" default="Stress">
 					<attributes options="Stress,Strain" />
 				</property>
 			</propertygroup>
-		</load> 
-		
+		</load>
+
 		<load name="failureEnvelope" version="1" caption="Failure Envelope Analysis" icon="failureEnvelopeAtTree" issupport="false" isload="true">
 			<callbacks>
                 <canadd>failureEnvelopeCanAddAtTree</canadd>
@@ -1145,7 +1145,7 @@
 				</propertytable>
 				<property name="Characteristic Length" caption="Characteristic Length" control="float" default="0.0" />
 			</propertygroup>
-			
+
 			<propertygroup name="Additional Information" caption="Additional Information">
 				<propertygroup name="Generalized StressStrain" caption="Generalized Stress/Strain" control="select" default="Stress" display="property">
 					<attributes options="Stress,Strain" />
@@ -1164,8 +1164,8 @@
 				</propertygroup>
 				<property name="Number of divisions along one direction" caption="Number of divisions along one direction" control="float" default="10" />
 			</propertygroup>
-		</load> 
-		
+		</load>
+
 		<load name="failureIndex" version="1" caption="Failure Index Analysis" icon="failureIndexAtTree" issupport="false" isload="true">
 			<callbacks>
                 <canadd>failureIndexCanAddAtTree</canadd>
@@ -1209,7 +1209,7 @@
 				</propertytable>
 				<property name="Characteristic Length" caption="Characteristic Length" control="float" default="0.0" />
 			</propertygroup>
-			
+
 			<propertygroup name="Additional Information" caption="Additional Information">
 				<propertygroup name="Generalized StressStrain" caption="Generalized Stress/Strain" control="select" default="Stress" display="property">
 					<attributes options="Stress,Strain" />
@@ -1225,7 +1225,7 @@
 						<property name="M2" caption="M2" control="float" />
 						<property name="M3" caption="M3" control="float" />
 					</propertygroup>
-					
+
 					<propertygroup name="Euler-Bernoulli Beam Strain" caption="Euler-Bernoulli Beam Strain" visibleon="Strain" display="caption" control="text" default="">
 					    <callbacks>
 							<isvisible>EulerBernoulliBeamStrainVisible</isvisible>
@@ -1235,7 +1235,7 @@
 						<property name="kappa12" caption="kappa12" control="float" />
 						<property name="kappa13" caption="kappa13" control="float" />
 					</propertygroup>
-						
+
 					<propertygroup name="Timoshenko Beam Stress" caption="Timoshenko Beam Stress" visibleon="Stress" display="caption" control="text" default="">
 					    <callbacks>
 							<isvisible>TimoshenkoBeamStressVisible</isvisible>
@@ -1247,7 +1247,7 @@
 						<property name="M2" caption="M2" control="float" />
 						<property name="M3" caption="M3" control="float" />
 					</propertygroup>
-						
+
 					<propertygroup name="Timoshenko Beam Strain" caption="Timoshenko Beam Strain" visibleon="Strain" display="caption" control="text" default="">
 					    <callbacks>
 							<isvisible>TimoshenkoBeamStrainVisible</isvisible>
@@ -1259,7 +1259,7 @@
 						<property name="kappa12" caption="kappa12" control="float" />
 						<property name="kappa13" caption="kappa13" control="float" />
 					</propertygroup>
-					
+
 					<propertygroup name="Kirchhoff-Love Plate Stress" caption="Kirchhoff-Love Plate Stress" visibleon="Stress" display="caption" control="text" default="">
 					    <callbacks>
 							<isvisible>KirchhoffLovePlateStressVisible</isvisible>
@@ -1271,7 +1271,7 @@
 						<property name="M22" caption="M22" control="float" />
 						<property name="M12" caption="M12" control="float" />
 					</propertygroup>
-						
+
 					<propertygroup name="Kirchhoff-Love Plate Strain" caption="Kirchhoff-Love Plate Strain" visibleon="Strain" display="caption" control="text" default="">
 					    <callbacks>
 							<isvisible>KirchhoffLovePlateStrainVisible</isvisible>
@@ -1283,7 +1283,7 @@
 						<property name="kappa22" caption="kappa22" control="float" />
 						<property name="2kappa12" caption="2kappa12" control="float" />
 					</propertygroup>
-					
+
 					<propertygroup name="Reissner-Mindlin Plate Stress" caption="Reissner-Mindlin Plate Stress" visibleon="Stress" display="caption" control="text" default="">
 					    <callbacks>
 							<isvisible>ReissnerMindlinPlateStressVisible</isvisible>
@@ -1297,7 +1297,7 @@
 						<property name="N13" caption="N13" control="float" />
 						<property name="N23" caption="N23" control="float" />
 					</propertygroup>
-					
+
 					<propertygroup name="Reissner-Mindlin Plate Strain" caption="Reissner-Mindlin Plate Strain" visibleon="Strain" display="caption" control="text" default="">
 					    <callbacks>
 							<isvisible>ReissnerMindlinPlateStrainVisible</isvisible>
@@ -1336,7 +1336,7 @@
 					</propertygroup>
 				</propertygroup>
 			</propertygroup>
-		</load> 
+		</load>
 
     </simdata>
 

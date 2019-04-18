@@ -17,7 +17,7 @@ def noSwiftCompExe(ExtAPI):
 
     def which(program):
         def is_exe(fpath):
-            return os.path.isfile(fpath) and os.access(fpath, os.X_OK)
+            return os.path.isfile(fpath)
         for path in os.environ["PATH"].split(os.pathsep):
             exe_file = os.path.join(path, program)
             if is_exe(exe_file):

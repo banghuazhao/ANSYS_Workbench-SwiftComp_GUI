@@ -24,7 +24,7 @@ class SGMaterial(object):
             self.MaterialProperty[i] = SGMaterialProperty(T[i], density[i])
             self.MaterialProperty[i].orthotropic = {'E1':E1[i], 'E2':E2[i], 'E3':E3[i], 'G12':G12[i], 'G13':G13[i], 'G23':G23[i], 'nu12':nu12[i], 'nu13':nu13[i], 'nu23':nu23[i]}
 
-    def setAnisotropicMaterialProperty(self, T, density, C):
+    def setAnisotropicMaterialProperty(self, ntemp, T, density, C):
         for i in range(ntemp):
             self.MaterialProperty[i] = SGMaterialProperty(T[i], density[i])
             self.MaterialProperty[i].anisotropic = C
